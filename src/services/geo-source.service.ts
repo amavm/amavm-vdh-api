@@ -72,7 +72,10 @@ export class MTLOpenDataGeoSourceService implements GeoSourceService {
     return position.map(
       (x) => x.map(
         (y) => {
-          return this.transformCoordinates.forward([y[0], y[1]]);
+          return this.transformCoordinates
+            .forward([y[0], y[1]])
+            .map((z) => parseFloat(z.toFixed(10)))
+            .reverse();
         }));
   }
 }
