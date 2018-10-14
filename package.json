@@ -31,11 +31,11 @@
   "dependencies": {
     "aws-sdk": "^2.317.0",
     "mongodb": "^3.1.6",
+    "proj4": "^2.5.0",
     "source-map-support": "^0.5.9",
     "uno-serverless": "^0.51.0",
     "uno-serverless-aws": "^0.51.0",
     "uno-serverless-jwt": "^0.51.0",
-    "utm-latlng": "^1.0.5",
     "uuid": "^3.3.2",
     "windows-1252": "^1.0.0"
   },
@@ -47,6 +47,7 @@
     "@types/mongodb": "^3.1.9",
     "@types/nock": "^9.3.0",
     "@types/node": "^10.10.1",
+    "@types/proj4": "^2.3.4",
     "@types/sinon": "^5.0.2",
     "@types/uuid": "^3.4.4",
     "cache-loader": "^1.2.2",

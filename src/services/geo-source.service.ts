@@ -1,8 +1,8 @@
 import { BicyclePath, BicyclePathDivider, BicyclePathStatus } from "@entities/bicycle-paths";
 import { bicyclePathSchema } from "@entities/schemas";
 import { FeatureCollection, MultiLineString, Position } from "geojson";
+import proj4 = require("proj4/dist/proj4");
 import { HttpClient, validateAndThrow } from "uno-serverless";
-import utmConverter = require("utm-latlng");
 import windows1252 = require("windows-1252");
 
 /** The GeoSourceService is responsible for getting source geographical information. */
@@ -17,7 +17,11 @@ export interface MTLOpenDataGeoSourceServiceOptions {
 
 export class MTLOpenDataGeoSourceService implements GeoSourceService {
 
-  private readonly utm = new utmConverter();
+  private readonly sourceCoordinateSystem =
+    "+proj=tmerc +lat_0=0 +lon_0=-73.5 +k=0.9999 +x_0=304800 +y_0=0 +datum=NAD83 +units=m +no_defs";
+  private readonly destinationCoordinateSystem = "+proj=longlat +datum=WGS84 +no_defs";
+
+  private readonly transformCoordinates = proj4(this.sourceCoordinateSystem, this.destinationCoordinateSystem);
 
   public constructor(
     private readonly options: MTLOpenDataGeoSourceServiceOptions,
@@ -68,8 +72,7 @@ export class MTLOpenDataGeoSourceService implements GeoSourceService {
     return position.map(
       (x) => x.map(
         (y) => {
-          const latlng = this.utm.convertUtmToLatLng(y[0], y[1], 18, "T");
-          return [latlng.lat, latlng.lng];
+          return this.transformCoordinates.forward([y[0], y[1]]);
         }));
   }
 }

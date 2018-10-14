@@ -45,7 +45,6 @@ describe("MTLOpenDataGeoSourceService", () => {
 
   nockIt("should download MTL open data bicycle paths", async () => {
     const result = await service.getBicyclePaths();
-    console.log(result[0]!.geometry.coordinates)
     expect(result).to.not.be.empty;
   });
 
