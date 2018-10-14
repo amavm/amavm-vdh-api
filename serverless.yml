@@ -78,10 +78,5 @@ functions:
 
   sync:
     handler: src/handlers/sync.handler
-    events:
-      - http:
-          path: api/v1/sync
-          method: POST
-          cors: true
 
 resources: ${file(cf-resources.yml):resources}

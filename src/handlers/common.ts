@@ -20,7 +20,7 @@ const getStageFromFunctionName = (functionName: string) => {
 /** Instantiate container using contextual information. */
 const createContainerFromEvent = (arg: uno.FunctionArg<uno.UnoEvent, Container>) => {
   /** True if running locally, under serverless-offline. */
-  if (process.env.IS_OFFLINE) {
+  if (process.env.IS_OFFLINE || process.env.IS_LOCAL) {
     return createContainer({ mode: ExecutionMode.LocalDev, stage: "local" });
   }
 
