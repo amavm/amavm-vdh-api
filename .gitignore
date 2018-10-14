@@ -1,0 +1,10 @@
+node_modules
+dist
+.cache-loader
+.nyc_output
+.webpack
+.serverless
+tmp/*
+coverage
+test-results.xml
+newman

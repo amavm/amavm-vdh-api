@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "outDir": "./dist",
+    "module": "commonjs",
+    "strictNullChecks": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "rootDir": "./",
+    "baseUrl": ".",
+    "paths": {
+      "@events/*": ["./src/events/*"],
+      "@entities/*": ["./src/entities/*"],
+      "@config": ["./src/config"],
+      "@error.messages": ["./src/error.messages"],
+      "@common": ["./src/handlers/common"],
+      "@container": ["./src/container"],
+      "@handlers/*": ["./src/handlers/*"],
+      "@resources": ["./src/resources"],
+      "@services/*": ["./src/services/*"],
+      "@test/*": ["./test/unit/*"]
+    }
+  }
+}

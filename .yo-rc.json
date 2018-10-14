@@ -1,0 +1,5 @@
+{
+  "generator-uno-serverless": {
+    "projectType": "aws-lambda-sls"
+  }
+}

@@ -1,0 +1,87 @@
+service: amavm-bpsr-api
+
+plugins:
+  - serverless-api-stage
+  - serverless-plugin-aws-alerts
+  - serverless-webpack
+  - serverless-offline
+
+custom:
+  apiVersion: ${file(./build/api-version.js)}
+  timestamp: ${file(./build/timestamp.js)}
+  environment: ${opt:stage}
+  parameterStorePrefix: /amavm/bpsr-api/${opt:stage}
+  region: ${opt:region, 'us-east-1'}
+
+  stageSettings:
+    MethodSettings:
+      LoggingLevel: ERROR
+      MetricsEnabled: true
+
+  tags:
+    environment: ${self:custom.environment}
+    application: ${self:service}
+
+  alerts:
+    dashboards: true
+    definitions:
+      functionDuration:
+        threshold: 10000
+    alarms:
+      - functionThrottles
+      - functionErrors
+      - functionInvocations
+      - functionDuration
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  region: ${self:custom.region}
+  timeout: 30
+  stackTags: ${self:custom.tags}
+  iamRoleStatements:
+    - Effect: "Allow" # SSM Parameter store
+      Action:
+        - "ssm:GetParameterHistory"
+        - "ssm:GetParametersByPath"
+      Resource:
+        - "Fn::Join":
+            - ":"
+            -
+              - "arn"
+              - Ref: "AWS::Partition"
+              - "ssm"
+              - Ref: "AWS::Region"
+              - Ref: "AWS::AccountId"
+              - "parameter${self:custom.parameterStorePrefix}*"
+
+functions:
+  health:
+    handler: src/handlers/health.handler
+    events:
+      - http:
+          path: api/health
+          method: GET
+          cors: true
+  
+  bicycle-paths:
+    handler: src/handlers/bicycle-paths.handler
+    events:
+      - http:
+          path: api/v1/bicycle-paths
+          method: ANY
+          cors: true
+      - http:
+          path: api/v1/bicycle-paths/{proxy+}
+          method: ANY
+          cors: true
+
+  sync:
+    handler: src/handlers/sync.handler
+    events:
+      - http:
+          path: api/v1/sync
+          method: POST
+          cors: true
+
+resources: ${file(cf-resources.yml):resources}
