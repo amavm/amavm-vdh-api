@@ -1,4 +1,4 @@
-import { BicyclePath, BicyclePathStatus, BicyclePathType } from "@entities/bicycle-paths";
+import { BicyclePath, BicyclePathSnowRemovalStatus, BicyclePathType } from "@entities/bicycle-paths";
 import * as faker from "faker";
 
 export const testBicyclePath = (spec: Partial<BicyclePath> = {}): BicyclePath => ({
@@ -12,10 +12,14 @@ export const testBicyclePath = (spec: Partial<BicyclePath> = {}): BicyclePath =>
     ],
     type: "MultiLineString",
   },
-  id: faker.random.alphaNumeric(),
+  id: faker.random.alphaNumeric(8),
   length: faker.random.number(),
   numberOfLanes: 2,
-  status: BicyclePathStatus.Unknown,
+  status: {
+    snowRemoval: {
+      status: BicyclePathSnowRemovalStatus.Unknown,
+    },
+  },
   type: BicyclePathType.ChausseeDesignee,
   ...spec,
 });

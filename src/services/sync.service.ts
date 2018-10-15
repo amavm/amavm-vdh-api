@@ -1,4 +1,3 @@
-import { BicyclePathStatus } from "@entities/bicycle-paths";
 import { BicyclePathsService } from "@services/bicycle-paths.service";
 import { GeoSourceService } from "@services/geo-source.service";
 
@@ -21,7 +20,7 @@ export class DefaultSyncService implements SyncService {
       bp = {
         ...existingBp,
         ...bp,
-        status: existingBp ? existingBp.status : BicyclePathStatus.Unknown,
+        status: existingBp ? existingBp.status : bp.status,
       };
       await this.bicyclePathsService.set(bp);
     }));

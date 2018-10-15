@@ -6,6 +6,66 @@
  */
 // tslint:disable
 
+export const bicyclePathSnowRemovalStatusSchema = {
+  enum: ["clean", "full", "partially", "unknown"],
+  type: "string",
+};
+
+export const bicyclePathObservationTypesSchema = {
+  enum: [0],
+  type: "number",
+};
+
+export const bicyclePathSnowRemovalObservationSchema = {
+  additionalProperties: false,
+  properties: {
+    bicyclePathId: {
+      type: "string",
+    },
+    snowRemoval: bicyclePathSnowRemovalStatusSchema,
+    timestamp: {
+      description: "The timestamp - unix epoch",
+      minimum: 0,
+      type: "number",
+    },
+    type: bicyclePathObservationTypesSchema,
+    userId: {
+      type: "string",
+    },
+  },
+  required: ["bicyclePathId", "snowRemoval", "timestamp", "type", "userId"],
+  type: "object",
+};
+
+export const bicyclePathSnowRemovalObservationRequestSchema = {
+  additionalProperties: false,
+  properties: {
+    snowRemoval: bicyclePathSnowRemovalStatusSchema,
+    timestamp: {
+      description: "The timestamp - unix epoch",
+      minimum: 0,
+      type: "number",
+    },
+  },
+  required: ["snowRemoval", "timestamp"],
+  type: "object",
+};
+
+export const bicyclePathObservationContextSchema = {
+  additionalProperties: false,
+  properties: {
+    bicyclePathId: {
+      type: "string",
+    },
+    type: bicyclePathObservationTypesSchema,
+    userId: {
+      type: "string",
+    },
+  },
+  required: ["bicyclePathId", "type", "userId"],
+  type: "object",
+};
+
 export const bicyclePathsRequestSchema = {
   additionalProperties: false,
   properties: {
@@ -118,11 +178,6 @@ export const bicyclePathTypeSchema = {
   type: "number",
 };
 
-export const bicyclePathStatusSchema = {
-  enum: ["clean", "full", "partially", "unknown"],
-  type: "string",
-};
-
 export const bicyclePathSchema = {
   additionalProperties: false,
   description: "A bicycle path.",
@@ -149,7 +204,24 @@ export const bicyclePathSchema = {
       description: "The number of lanes",
       type: "number",
     },
-    status: bicyclePathStatusSchema,
+    status: {
+      additionalProperties: false,
+      properties: {
+        snowRemoval: {
+          additionalProperties: false,
+          properties: {
+            status: bicyclePathSnowRemovalStatusSchema,
+            timestamp: {
+              type: "number",
+            },
+          },
+          required: ["status"],
+          type: "object",
+        },
+      },
+      required: ["snowRemoval"],
+      type: "object",
+    },
     type: bicyclePathTypeSchema,
   },
   required: ["borough", "geometry", "id", "length", "numberOfLanes", "status", "type"],

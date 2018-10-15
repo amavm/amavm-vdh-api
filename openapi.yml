@@ -7,6 +7,8 @@ info:
 tags:
   - name: Api
     description: Operations related to general API operations
+  - name: Bicycle Paths
+    description: Operations related to Bicycle Paths
 paths:
   /info:
     get:
@@ -16,6 +18,9 @@ paths:
       responses:
         '200':
           description: The Api information
+          headers:
+            x-amzn-RequestId:
+              $ref: '#/components/headers/x-amzn-RequestId'
           content:
             application/json:
               schema:
@@ -52,6 +57,9 @@ paths:
       responses:
         '200':
           description: The system is healthy.
+          headers:
+            x-amzn-RequestId:
+              $ref: '#/components/headers/x-amzn-RequestId'
           content:
             application/json:
               schema:
@@ -74,9 +82,90 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HealthCheckResult'
-
+                
+  /api/v1/bicycle-paths:
+    get:
+      summary: Retrieve the list of bicycle paths
+      tags:
+        - Bicycle Paths
+      parameters:
+        - name: bbox
+          description: The bounding box to restrict for position
+          in: query
+          schema:
+            type: array
+            items:
+              type: number
+            minimum: 8
+            maximum: 8
+          style: form
+          explode: false
+        - name: near
+          description: A single coordinate to indicate center position
+          in: query
+          schema:
+            type: array
+            items:
+              type: number
+            minimum: 2
+            maximum: 2
+          style: form
+          explode: false
+        - name: nextToken
+          description: The continuation token for next results
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The list of bicycle paths
+          headers:
+            x-amzn-RequestId:
+              $ref: '#/components/headers/x-amzn-RequestId'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BicyclePath'
+                  nextToken:
+                    type: string
+                required:
+                  - items
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  /api/v1/bicycle-paths/{bicyclePathId}/observations/snow-removal:
+    post:
+      summary: Post a new observation about snow removal
+      tags:
+        - Bicycle Paths
+      parameters:
+        - name: bicyclePathId
+          description: The id of the bicycle path.
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The updated bicycle path
+          headers:
+            x-amzn-RequestId:
+              $ref: '#/components/headers/x-amzn-RequestId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BicyclePath'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '404':
+          $ref: '#/components/responses/notfound'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
 components:
-
   headers:
     x-amzn-RequestId:
       description: The request id that uniquely identifies this request.
@@ -206,3 +295,124 @@ components:
           description: 'Sub health checks, if any.'
           items:
             $ref: '#/components/schemas/HealthCheckResult'
+    BicyclePath:
+      description: A bicycle path.
+      type: object
+      properties:
+        borough:
+          description: The name of the borough.
+          type: string
+        divider:
+          description: The divider type.
+          enum:
+            - C
+            - D
+            - J
+            - M
+            - P
+          type: string
+        geometry:
+          $ref: '#/components/schemas/GeoJSON.MultiLineString'
+          description: The GeoJson geometry.
+        id:
+          description: Unique id for the bicycle path
+          type: string
+        length:
+          description: The length in meters
+          type: number
+        numberOfLanes:
+          description: The number of lanes
+          type: number
+        status:
+          type: object
+          properties:
+            snowRemoval:
+              type: object
+              properties:
+                status:
+                  $ref: '#/components/schemas/BicyclePathSnowRemovalStatus'
+                timestamp:
+                  type: number
+              additionalProperties: false
+              required:
+                - status
+          additionalProperties: false
+          required:
+            - snowRemoval
+        type:
+          $ref: '#/components/schemas/BicyclePathType'
+          description: The type of bicycle path
+      additionalProperties: false
+      required:
+        - borough
+        - geometry
+        - id
+        - length
+        - numberOfLanes
+        - status
+        - type
+    BicyclePathDivider:
+      enum:
+        - C
+        - D
+        - J
+        - M
+        - P
+      type: string
+    BicyclePathSnowRemovalStatus:
+      enum:
+        - clean
+        - full
+        - partially
+        - unknown
+      type: string
+    BicyclePathType:
+      enum:
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+      type: number
+    BicyclePathsRequest:
+      type: object
+      properties:
+        bbox:
+          type: array
+          items:
+            type: number
+        near:
+          type: array
+          items:
+            type: number
+        nextToken:
+          description: The next continuation token.
+          type: string
+      additionalProperties: false
+    GeoJSON.MultiLineString:
+      description: |-
+        MultiLineString geometry object.
+        https://tools.ietf.org/html/rfc7946#section-3.1.5
+      type: object
+      properties:
+        type:
+          description: Specifies the type of GeoJSON object.
+          type: string
+          enum:
+            - MultiLineString
+        coordinates:
+          type: array
+          items:
+            type: array
+            items:
+              type: array
+              items:
+                type: number
+
+      additionalProperties: false
+      required:
+        - coordinates
+        - type

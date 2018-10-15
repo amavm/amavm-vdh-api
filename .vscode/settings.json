@@ -3,6 +3,16 @@
         "amavm",
         "bpsr"
     ],
-    "git.ignoreLimitWarning": true,
+    "files.exclude": {
+      "**/node_modules": true,
+      "**/dist": true,
+      "**/.serverless": true,
+      "**/.cache-loader": true,
+      "**/.nyc_output": true,
+      "**/coverage": true,
+      "**/newman": true,
+      ".yo-rc.json": true,
+      ".webpack": true,
+    },
     "typescript.tsdk": "node_modules/typescript/lib"
 }

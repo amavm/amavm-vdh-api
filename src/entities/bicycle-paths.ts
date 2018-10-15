@@ -20,7 +20,7 @@ export enum BicyclePathDivider {
   Jersey = "J",
 }
 
-export enum BicyclePathStatus {
+export enum BicyclePathSnowRemovalStatus {
   Unknown = "unknown",
   Clean = "clean",
   Partially = "partially",
@@ -47,7 +47,12 @@ export interface BicyclePath {
   /** The number of lanes */
   numberOfLanes: number;
 
-  status: BicyclePathStatus;
+  status: {
+    snowRemoval: {
+      status: BicyclePathSnowRemovalStatus;
+      timestamp?: number;
+    };
+  };
 
   /** The type of bicycle path */
   type: BicyclePathType;

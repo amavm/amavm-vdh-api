@@ -1,4 +1,4 @@
-import { BicyclePath, BicyclePathDivider, BicyclePathStatus } from "@entities/bicycle-paths";
+import { BicyclePath, BicyclePathDivider, BicyclePathSnowRemovalStatus } from "@entities/bicycle-paths";
 import { bicyclePathSchema } from "@entities/schemas";
 import { FeatureCollection, MultiLineString, Position } from "geojson";
 import proj4 = require("proj4/dist/proj4");
@@ -55,7 +55,11 @@ export class MTLOpenDataGeoSourceService implements GeoSourceService {
         id: Math.trunc(x.properties.ID).toString(),
         length: Math.trunc(x.properties.LONGUEUR),
         numberOfLanes: Math.trunc(x.properties.NBR_VOIE),
-        status: BicyclePathStatus.Unknown,
+        status: {
+          snowRemoval: {
+            status: BicyclePathSnowRemovalStatus.Unknown,
+          },
+        },
         type: Math.trunc(x.properties.TYPE_VOIE),
       }));
 

@@ -1,6 +1,8 @@
 import { httpFunc } from "@common";
 import { Container } from "@container";
 import { BicyclePathsRequest } from "@entities/bicycle-paths";
+import { BicyclePathObservationTypes, BicyclePathSnowRemovalObservationRequest } from "@entities/observations";
+import { bicyclePathSnowRemovalObservationRequestSchema } from "@entities/schemas";
 import { httpRouter } from "uno-serverless";
 
 export const handler = httpFunc()
@@ -21,6 +23,19 @@ export const handler = httpFunc()
           nextToken: event.parameters.nextToken,
         };
         return bicyclePathsService().find(request);
+      },
+    },
+    ":bicyclePathId/observations/snow-removal": {
+      post: async ({ event, services: { bicyclePathsService } }) => {
+        const request = event.body<BicyclePathSnowRemovalObservationRequest>(
+          { validate: bicyclePathSnowRemovalObservationRequestSchema });
+
+        return bicyclePathsService().addSnowRemovalObservation({
+          ...request,
+          bicyclePathId: event.parameters.bicyclePathId,
+          type: BicyclePathObservationTypes.SnowRemoval,
+          userId: "system",
+        });
       },
     },
   }));
