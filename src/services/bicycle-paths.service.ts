@@ -165,7 +165,7 @@ export class MongoDbBicyclePathsService implements BicyclePathsService, CheckHea
     pagination.skip += pagination.limit;
     return {
       items: result.map((x) => this.mapBp(x)),
-      nextToken: encodeNextToken(pagination),
+      nextToken: result.length < pagination.limit ? undefined : encodeNextToken(pagination),
     };
   }
 
