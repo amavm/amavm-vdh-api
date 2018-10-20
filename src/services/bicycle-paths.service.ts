@@ -22,7 +22,7 @@ export interface MongoDbBicyclePathsServiceOptions {
 
 export const BICYCLE_PATH_COLLECTION = "bicycle-paths";
 export const OBSERVATIONS_COLLECTION = "observations";
-const DEFAULT_LIMIT = 200;
+const DEFAULT_LIMIT = 500;
 
 export class MongoDbBicyclePathsService implements BicyclePathsService, CheckHealth {
 
