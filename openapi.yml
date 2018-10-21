@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
-  title: AMAVM BPSR API
+  title: AMAVM VDH API
   description: |
-    AMAVM BPSR API
+    AMAVM VDH API
   version: 1.0.9999
 tags:
   - name: Api

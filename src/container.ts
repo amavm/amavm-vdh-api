@@ -35,9 +35,9 @@ export const createContainer = uno.createContainerFactory<Container, ContainerOp
   }),
 
   configService: ({ options }) => options.mode === ExecutionMode.LocalDev
-    ? new uno.JSONFileConfigService({ debug: true, path: "/Users/julien/dev/amavm/amavm-bpsr-api/local.config.json" })
+    ? new uno.JSONFileConfigService({ debug: true, path: "./local.config.json" })
     : new unoAws.SSMParameterStoreConfigService({
-      path: `/amavm/bpsr-api/${options.stage}`,
+      path: `/amavm/vdh-api/${options.stage}`,
     }),
 
   environmentName: ({ options }) => options.stage,

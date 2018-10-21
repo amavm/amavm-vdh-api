@@ -1,7 +1,7 @@
 {
-  "name": "amavm-bpsr-api",
+  "name": "amavm-vdh-api",
   "version": "0.1.0",
-  "description": "AMAVM BPSR API",
+  "description": "AMAVM VDH API",
   "private": true,
   "scripts": {
     "lint": "tslint --project tsconfig.json",

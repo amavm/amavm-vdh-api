@@ -18,7 +18,7 @@ const promptDefault = async (question: string, defaultAnswer?: string) => {
   const region = await promptDefault("AWS region", "us-east-1");
   process.env.AWS_REGION = region;
   const environment = await promptDefault("Environment");
-  const path = `/amavm/bpsr-api/${environment}`;
+  const path = `/amavm/vdh-api/${environment}`;
   console.log(`Path: ${path}`);
   console.log();
 

@@ -1,5 +1,5 @@
 {
   "mtl-od-bp-url": "http://donnees.ville.montreal.qc.ca/dataset/5ea29f40-1b5b-4f34-85b3-7c67088ff536/resource/0dc6612a-be66-406b-b2d9-59c9e1c65ebf/download/reseau_cyclable_2018_juillet2018.geojson",
   "mongodb-url": "mongodb://localhost:27017",
-  "mongodb-db": "amavm-bpsr"
+  "mongodb-db": "amavm-vdh"
 }

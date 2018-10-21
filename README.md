@@ -1,4 +1,4 @@
-# amavm-bpsr-api
+# amavm-vdh-api
 
 ## Prerequisites
 

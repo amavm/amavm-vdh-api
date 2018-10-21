@@ -1,4 +1,4 @@
-service: amavm-bpsr-api
+service: amavm-vdh-api
 
 plugins:
   - serverless-api-stage
@@ -10,7 +10,7 @@ custom:
   apiVersion: ${file(./build/api-version.js)}
   timestamp: ${file(./build/timestamp.js)}
   environment: ${opt:stage}
-  parameterStorePrefix: /amavm/bpsr-api/${opt:stage}
+  parameterStorePrefix: /amavm/vdh-api/${opt:stage}
   region: ${opt:region, 'us-east-1'}
 
   stageSettings:

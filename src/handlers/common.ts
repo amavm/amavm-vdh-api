@@ -6,7 +6,7 @@ import * as unoAws from "uno-serverless-aws";
  * The serverless service name.
  * Must be the same as the service name in the serverless.yml file.
  */
-export const SERVICE_NAME = "amavm-bpsr-api";
+export const SERVICE_NAME = "amavm-vdh-api";
 
 /**
  * Get the stage from the function name
