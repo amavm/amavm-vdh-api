@@ -1,4 +1,4 @@
-import { BicyclePath, BicyclePathDivider, BicyclePathSnowRemovalStatus } from "@entities/bicycle-paths";
+import { BicyclePath, BicyclePathDivider, BicyclePathNetwork, BicyclePathType } from "@entities/bicycle-paths";
 import { bicyclePathSchema } from "@entities/schemas";
 import { FeatureCollection, MultiLineString, Position } from "geojson";
 import proj4 = require("proj4/dist/proj4");
@@ -12,7 +12,7 @@ export interface GeoSourceService {
 }
 
 export interface MTLOpenDataGeoSourceServiceOptions {
-  bicyclePathsSourceUrl: string | Promise<string>;
+  bicyclePathsSourceUrl: string | Promise<string>;
 }
 
 export class MTLOpenDataGeoSourceService implements GeoSourceService {
@@ -43,24 +43,16 @@ export class MTLOpenDataGeoSourceService implements GeoSourceService {
       .filter((x) => x.properties.Ville_MTL === "OUI")
       .map<BicyclePath>((x) => ({
         borough: x.properties.NOM_ARR_VI,
-        divider: x.properties.SEPARATEUR
-          ? (Object.values(BicyclePathDivider).includes(x.properties.SEPARATEUR)
-            ? x.properties.SEPARATEUR as BicyclePathDivider
-            : undefined)
-          : undefined,
+        divider: this.convertDivider(x.properties.SEPARATEUR),
         geometry: {
           coordinates: this.convertCoordinates(x.geometry.coordinates),
           type: x.geometry.type,
         },
         id: Math.trunc(x.properties.ID).toString(),
         length: Math.trunc(x.properties.LONGUEUR),
+        network: this.convertNetwork(x.properties.SAISONS4),
         numberOfLanes: Math.trunc(x.properties.NBR_VOIE),
-        status: {
-          snowRemoval: {
-            status: BicyclePathSnowRemovalStatus.Unknown,
-          },
-        },
-        type: Math.trunc(x.properties.TYPE_VOIE),
+        type: this.convertType(Math.trunc(x.properties.TYPE_VOIE)),
       }));
 
     validateAndThrow(
@@ -81,6 +73,57 @@ export class MTLOpenDataGeoSourceService implements GeoSourceService {
             .map((z) => parseFloat(z.toFixed(10)))
             .reverse();
         }));
+  }
+
+  private convertDivider(sourceSeparateur?: string): BicyclePathDivider {
+    switch (sourceSeparateur) {
+      case "M":
+        return BicyclePathDivider.Mail;
+      case "D":
+        return BicyclePathDivider.Delineateur;
+      case "P":
+        return BicyclePathDivider.MarquageAuSol;
+      case "C":
+        return BicyclePathDivider.Cloture;
+      case "J":
+        return BicyclePathDivider.Jersey;
+      default:
+        return BicyclePathDivider.Unknown;
+    }
+  }
+
+  private convertNetwork(sourceSaison4?: string): BicyclePathNetwork {
+    switch (sourceSaison4) {
+      case "OUI":
+        return BicyclePathNetwork.Seasons4;
+      case "NON":
+        return BicyclePathNetwork.Seasons3;
+      default:
+        return BicyclePathNetwork.Unknown;
+    }
+  }
+
+  private convertType(sourceType?: number): BicyclePathType {
+    switch (sourceType) {
+      case 1:
+        return BicyclePathType.ChausseeDesignee;
+      case 2:
+        return BicyclePathType.AccotementAsphalte;
+      case 3:
+        return BicyclePathType.BandeCyclable;
+      case 4:
+        return BicyclePathType.PisteCyclableSurRue;
+      case 5:
+        return BicyclePathType.PisteCyclableEnSitePropre;
+      case 6:
+        return BicyclePathType.PisteCyclableAuNiveauDuTrottoir;
+      case 7:
+        return BicyclePathType.SentierPolyvalent;
+      case 8:
+        return BicyclePathType.Velorue;
+      default:
+        return BicyclePathType.Unknown;
+    }
   }
 }
 

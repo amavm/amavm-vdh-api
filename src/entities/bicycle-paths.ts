@@ -2,29 +2,30 @@ import { MultiLineString } from "geojson";
 import { WithContinuation } from "uno-serverless";
 
 export enum BicyclePathType {
-  ChausseeDesignee = 1,
-  AccotementAsphalte = 2,
-  BandeCyclable = 3,
-  PisteCyclableSurRue = 4,
-  PisteCyclableEnSitePropre = 5,
-  PisteCyclableAuNiveauDuTrottoir = 6,
-  SentierPolyvalent = 7,
-  Velorue = 8,
+  Unknown = "unknown",
+  ChausseeDesignee = "chaussee-designee",
+  AccotementAsphalte = "accotement-asphalte",
+  BandeCyclable = "bande-cycleable",
+  PisteCyclableSurRue = "piste-cyclable-rue",
+  PisteCyclableEnSitePropre = "piste-cyclable-site-propre",
+  PisteCyclableAuNiveauDuTrottoir = "piste-cyclable-trottoir",
+  SentierPolyvalent = "sentier-polyvalent",
+  Velorue = "velorue",
 }
 
 export enum BicyclePathDivider {
-  Mail = "M",
-  Deelineateur = "D",
-  MarquageAuSol = "P",
-  Cloture = "C",
-  Jersey = "J",
+  Unknown = "unknown",
+  Mail = "mail",
+  Delineateur = "delineateur",
+  MarquageAuSol = "marquage-sol",
+  Cloture = "cloture",
+  Jersey = "jersey",
 }
 
-export enum BicyclePathSnowRemovalStatus {
+export enum BicyclePathNetwork {
   Unknown = "unknown",
-  Clean = "clean",
-  Partially = "partially",
-  Full = "full",
+  Seasons3 = "3-seasons",
+  Seasons4 = "4-seasons",
 }
 
 /** A bicycle path. */
@@ -33,7 +34,7 @@ export interface BicyclePath {
   borough: string;
 
   /** The divider type. */
-  divider?: BicyclePathDivider;
+  divider: BicyclePathDivider;
 
   /** The GeoJson geometry. */
   geometry: MultiLineString;
@@ -47,18 +48,23 @@ export interface BicyclePath {
   /** The number of lanes */
   numberOfLanes: number;
 
-  status: {
-    snowRemoval: {
-      status: BicyclePathSnowRemovalStatus;
-      timestamp?: number;
-    };
-  };
+  /** Which network does this bicycle path belong to. */
+  network: BicyclePathNetwork;
 
   /** The type of bicycle path */
   type: BicyclePathType;
 }
 
 export interface BicyclePathsRequest extends WithContinuation {
+  /**
+   * @maximum 8
+   * @minimum 8
+   */
   bbox?: number[];
+
+  /**
+   * @maximum 2
+   * @minimum 2
+   */
   near?: number[];
 }

@@ -1,5 +1,4 @@
 import { BicyclePath, BicyclePathsRequest } from "@entities/bicycle-paths";
-import { BicyclePathSnowRemovalObservation } from "@entities/observations";
 import { MongoClient, MongoClientOptions } from "mongodb";
 import {
   CheckHealth, checkHealth, ContinuationArray, decodeNextToken,
@@ -7,7 +6,6 @@ import {
 } from "uno-serverless";
 
 export interface BicyclePathsService {
-  addSnowRemovalObservation(observation: BicyclePathSnowRemovalObservation);
   get(id: string): Promise<BicyclePath | undefined>;
   findAll(): Promise<BicyclePath[]>;
   find(request: BicyclePathsRequest): Promise<ContinuationArray<BicyclePath>>;
@@ -21,7 +19,6 @@ export interface MongoDbBicyclePathsServiceOptions {
 }
 
 export const BICYCLE_PATH_COLLECTION = "bicycle-paths";
-export const OBSERVATIONS_COLLECTION = "observations";
 const DEFAULT_LIMIT = 500;
 
 export class MongoDbBicyclePathsService implements BicyclePathsService, CheckHealth {
@@ -58,29 +55,6 @@ export class MongoDbBicyclePathsService implements BicyclePathsService, CheckHea
             });
         });
       });
-  }
-
-  public async addSnowRemovalObservation(observation: BicyclePathSnowRemovalObservation) {
-    if (observation.timestamp > (new Date().getTime() / 1000)) {
-      throw validationError([{
-        code: "invalid",
-        message: "Observations cannot be made in the future.",
-        target: "timestamp",
-      }]);
-    }
-
-    const bicyclePath = await this.get(observation.bicyclePathId);
-    if (!bicyclePath) {
-      throw notFoundError("bicyclePathId");
-    }
-
-    const db = await this.lazyDb();
-    await db.collection(OBSERVATIONS_COLLECTION).insertOne(observation);
-    bicyclePath.status.snowRemoval = {
-      status: observation.snowRemoval,
-      timestamp: observation.timestamp,
-    };
-    return this.set(bicyclePath);
   }
 
   public async get(id: string): Promise<BicyclePath | undefined> {

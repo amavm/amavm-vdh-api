@@ -6,64 +6,202 @@
  */
 // tslint:disable
 
-export const bicyclePathSnowRemovalStatusSchema = {
-  enum: ["clean", "full", "partially", "unknown"],
+export const coordinatesSchema = {
+  additionalProperties: false,
+  properties: {
+    accuracy: {
+      type: "number",
+    },
+    altitude: {
+      type: ["null", "number"],
+    },
+    altitudeAccuracy: {
+      type: ["null", "number"],
+    },
+    heading: {
+      type: ["null", "number"],
+    },
+    latitude: {
+      type: "number",
+    },
+    longitude: {
+      type: "number",
+    },
+    speed: {
+      type: ["null", "number"],
+    },
+  },
+  required: ["accuracy", "altitude", "altitudeAccuracy", "heading", "latitude", "longitude", "speed"],
+  type: "object",
+};
+
+export const positionSchema = {
+  additionalProperties: false,
+  properties: {
+    coords: coordinatesSchema,
+    timestamp: {
+      type: "number",
+    },
+  },
+  required: ["coords", "timestamp"],
+  type: "object",
+};
+
+export const reportedObservationAssetSchema = {
+  additionalProperties: false,
+  description: "An asset attached alongside a ReportedObservation.",
+  properties: {
+    contentType: {
+      description: "The asset content-type",
+      type: "string",
+    },
+    url: {
+      description: "Base-64 encoded data.",
+      type: "string",
+    },
+  },
+  required: ["contentType", "url"],
+  type: "object",
+};
+
+export const reportedObservationSchema = {
+  additionalProperties: false,
+  description: "A reported observation",
+  properties: {
+    assets: {
+      description: "Associated assets.",
+      items: reportedObservationAssetSchema,
+      type: "array",
+    },
+    attributes: {
+      description: "Attributes to further characterize the observation.",
+      items: {
+        enum: ["ice", "snow"],
+        type: "string",
+      },
+      type: "array",
+    },
+    comment: {
+      description: "Free-form comments.",
+      type: "string",
+    },
+    deviceId: {
+      description: "A device identifier (the reporting device).",
+      type: "string",
+    },
+    position: positionSchema,
+    timestamp: {
+      description: "A timestamp of when the observation was done. Unix Epoch in seconds.",
+      type: "number",
+    },
+  },
+  required: ["attributes", "deviceId", "position", "timestamp"],
+  type: "object",
+};
+
+export const observationRequestAssetSchema = {
+  additionalProperties: false,
+  description: "An asset submitted alongside an ObservationRequest.",
+  properties: {
+    contentType: {
+      description: "The asset content-type",
+      type: "string",
+    },
+    data: {
+      description: "Base-64 encoded data.",
+      type: "string",
+    },
+  },
+  required: ["contentType", "data"],
+  type: "object",
+};
+
+export const observationRequestSchema = {
+  additionalProperties: false,
+  description: "Request to submit an observation.",
+  properties: {
+    assets: {
+      description: "Attached assets.",
+      items: observationRequestAssetSchema,
+      type: "array",
+    },
+    attributes: {
+      description: "Attributes to further characterize the observation.",
+      items: {
+        enum: ["ice", "snow"],
+        type: "string",
+      },
+      type: "array",
+    },
+    comment: {
+      description: "Free-form comments.",
+      type: "string",
+    },
+    deviceId: {
+      description: "A device identifier (the reporting device).",
+      type: "string",
+    },
+    position: positionSchema,
+    timestamp: {
+      description: "A timestamp of when the observation was done. Unix Epoch in seconds.",
+      type: "number",
+    },
+  },
+  required: ["attributes", "deviceId", "position", "timestamp"],
+  type: "object",
+};
+
+export const observationBaseSchema = {
+  additionalProperties: false,
+  description: "Base definition for observations.",
+  properties: {
+    attributes: {
+      description: "Attributes to further characterize the observation.",
+      items: {
+        enum: ["ice", "snow"],
+        type: "string",
+      },
+      type: "array",
+    },
+    comment: {
+      description: "Free-form comments.",
+      type: "string",
+    },
+    deviceId: {
+      description: "A device identifier (the reporting device).",
+      type: "string",
+    },
+    position: positionSchema,
+    timestamp: {
+      description: "A timestamp of when the observation was done. Unix Epoch in seconds.",
+      type: "number",
+    },
+  },
+  required: ["attributes", "deviceId", "position", "timestamp"],
+  type: "object",
+};
+
+export const observationAssetBaseSchema = {
+  additionalProperties: false,
+  properties: {
+    contentType: {
+      description: "The asset content-type",
+      type: "string",
+    },
+  },
+  required: ["contentType"],
+  type: "object",
+};
+
+export const observationAttributesSchema = {
+  enum: ["ice", "snow"],
   type: "string",
 };
 
-export const bicyclePathObservationTypesSchema = {
-  enum: [0],
-  type: "number",
-};
-
-export const bicyclePathSnowRemovalObservationSchema = {
-  additionalProperties: false,
-  properties: {
-    bicyclePathId: {
-      type: "string",
-    },
-    snowRemoval: bicyclePathSnowRemovalStatusSchema,
-    timestamp: {
-      description: "The timestamp - unix epoch",
-      minimum: 0,
-      type: "number",
-    },
-    type: bicyclePathObservationTypesSchema,
-    userId: {
-      type: "string",
-    },
-  },
-  required: ["bicyclePathId", "snowRemoval", "timestamp", "type", "userId"],
-  type: "object",
-};
-
-export const bicyclePathSnowRemovalObservationRequestSchema = {
-  additionalProperties: false,
-  properties: {
-    snowRemoval: bicyclePathSnowRemovalStatusSchema,
-    timestamp: {
-      description: "The timestamp - unix epoch",
-      minimum: 0,
-      type: "number",
-    },
-  },
-  required: ["snowRemoval", "timestamp"],
-  type: "object",
-};
-
-export const bicyclePathObservationContextSchema = {
-  additionalProperties: false,
-  properties: {
-    bicyclePathId: {
-      type: "string",
-    },
-    type: bicyclePathObservationTypesSchema,
-    userId: {
-      type: "string",
-    },
-  },
-  required: ["bicyclePathId", "type", "userId"],
-  type: "object",
+export const observationStatusSchema = {
+  description: "Status for an observation.",
+  enum: ["ko", "ok"],
+  type: "string",
 };
 
 export const bicyclePathsRequestSchema = {
@@ -73,12 +211,16 @@ export const bicyclePathsRequestSchema = {
       items: {
         type: "number",
       },
+      maximum: 8,
+      minimum: 8,
       type: "array",
     },
     near: {
       items: {
         type: "number",
       },
+      maximum: 2,
+      minimum: 2,
       type: "array",
     },
     nextToken: {
@@ -174,8 +316,18 @@ export const geoJsonMultiLineStringSchema = {
 };
 
 export const bicyclePathTypeSchema = {
-  enum: [1, 2, 3, 4, 5, 6, 7, 8],
-  type: "number",
+  enum: ["accotement-asphalte", "bande-cycleable", "chaussee-designee", "piste-cyclable-rue", "piste-cyclable-site-propre", "piste-cyclable-trottoir", "sentier-polyvalent", "unknown", "velorue"],
+  type: "string",
+};
+
+export const bicyclePathNetworkSchema = {
+  enum: ["3-seasons", "4-seasons", "unknown"],
+  type: "string",
+};
+
+export const bicyclePathDividerSchema = {
+  enum: ["cloture", "delineateur", "jersey", "mail", "marquage-sol", "unknown"],
+  type: "string",
 };
 
 export const bicyclePathSchema = {
@@ -186,11 +338,7 @@ export const bicyclePathSchema = {
       description: "The name of the borough.",
       type: "string",
     },
-    divider: {
-      description: "The divider type.",
-      enum: ["C", "D", "J", "M", "P"],
-      type: "string",
-    },
+    divider: bicyclePathDividerSchema,
     geometry: geoJsonMultiLineStringSchema,
     id: {
       description: "Unique id for the bicycle path",
@@ -200,35 +348,13 @@ export const bicyclePathSchema = {
       description: "The length in meters",
       type: "number",
     },
+    network: bicyclePathNetworkSchema,
     numberOfLanes: {
       description: "The number of lanes",
       type: "number",
     },
-    status: {
-      additionalProperties: false,
-      properties: {
-        snowRemoval: {
-          additionalProperties: false,
-          properties: {
-            status: bicyclePathSnowRemovalStatusSchema,
-            timestamp: {
-              type: "number",
-            },
-          },
-          required: ["status"],
-          type: "object",
-        },
-      },
-      required: ["snowRemoval"],
-      type: "object",
-    },
     type: bicyclePathTypeSchema,
   },
-  required: ["borough", "geometry", "id", "length", "numberOfLanes", "status", "type"],
+  required: ["borough", "divider", "geometry", "id", "length", "network", "numberOfLanes", "type"],
   type: "object",
-};
-
-export const bicyclePathDividerSchema = {
-  enum: ["C", "D", "J", "M", "P"],
-  type: "string",
 };
