@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "tslint --project tsconfig.json",
     "generate-schemas": "uno generate-schemas \"src/entities/*.ts\" -c ./tsconfig.json -f ts -o src/entities/schemas.ts",
-    "generate-openapi-schemas": "uno generate-schemas src/entities/*.ts -c ./tsconfig.json -f openapi3 -o openapi.yml",
+    "generate-openapi-schemas": "uno generate-schemas \"src/entities/*.ts\" -c ./tsconfig.json -f openapi3 -o openapi.yml",
     "prestart": "npm run generate-schemas",
     "start": "node --inspect ./node_modules/serverless/bin/serverless offline start -s local",
     "test": "mocha --opts test/mocha.opts test/unit/**/*.test.ts",

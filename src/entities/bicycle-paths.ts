@@ -1,4 +1,4 @@
-import { MultiLineString } from "geojson";
+import { Position } from "geojson";
 import { WithContinuation } from "uno-serverless";
 
 export enum BicyclePathType {
@@ -37,7 +37,10 @@ export interface BicyclePath {
   divider: BicyclePathDivider;
 
   /** The GeoJson geometry. */
-  geometry: MultiLineString;
+  geometry: {
+    type: "MultiLineString";
+    coordinates: Position[][];
+  };
 
   /** Unique id for the bicycle path */
   id: string;

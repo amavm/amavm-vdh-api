@@ -23,14 +23,23 @@ describe("DefaultSyncService", () => {
       testBicyclePath(),
       testBicyclePath(),
     ];
+
+    const previousBicyclePaths: BicyclePath[] = [
+      ...bicyclePaths,
+      testBicyclePath(),
+    ];
+    bicyclePathsServiceStub
+      .findAll
+      .returns(previousBicyclePaths);
+
     geoSourceServiceStub
       .getBicyclePaths
       .returns(bicyclePaths);
 
     await service.sync();
 
-    expect(bicyclePathsServiceStub.get.callCount).to.equal(2);
     expect(bicyclePathsServiceStub.set.callCount).to.equal(2);
+    expect(bicyclePathsServiceStub.delete.callCount).to.equal(1);
   });
 
 });

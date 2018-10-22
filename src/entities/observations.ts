@@ -1,3 +1,4 @@
+import { Position } from "geojson";
 
 /** Status for an observation. */
 export enum ObservationStatus {

@@ -76,6 +76,18 @@ functions:
           method: ANY
           cors: true
 
+  observations:
+    handler: src/handlers/observations.handler
+    events:
+      - http:
+          path: api/v1/observations
+          method: ANY
+          cors: true
+      - http:
+          path: api/v1/observations/{proxy+}
+          method: ANY
+          cors: true
+
   sync:
     handler: src/handlers/sync.handler
 

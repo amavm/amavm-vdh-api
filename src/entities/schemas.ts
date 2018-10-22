@@ -6,47 +6,6 @@
  */
 // tslint:disable
 
-export const coordinatesSchema = {
-  additionalProperties: false,
-  properties: {
-    accuracy: {
-      type: "number",
-    },
-    altitude: {
-      type: ["null", "number"],
-    },
-    altitudeAccuracy: {
-      type: ["null", "number"],
-    },
-    heading: {
-      type: ["null", "number"],
-    },
-    latitude: {
-      type: "number",
-    },
-    longitude: {
-      type: "number",
-    },
-    speed: {
-      type: ["null", "number"],
-    },
-  },
-  required: ["accuracy", "altitude", "altitudeAccuracy", "heading", "latitude", "longitude", "speed"],
-  type: "object",
-};
-
-export const positionSchema = {
-  additionalProperties: false,
-  properties: {
-    coords: coordinatesSchema,
-    timestamp: {
-      type: "number",
-    },
-  },
-  required: ["coords", "timestamp"],
-  type: "object",
-};
-
 export const reportedObservationAssetSchema = {
   additionalProperties: false,
   description: "An asset attached alongside a ReportedObservation.",
@@ -89,7 +48,13 @@ export const reportedObservationSchema = {
       description: "A device identifier (the reporting device).",
       type: "string",
     },
-    position: positionSchema,
+    position: {
+      description: "A GeoJSON position for the observation.",
+      items: {
+        type: "number",
+      },
+      type: "array",
+    },
     timestamp: {
       description: "A timestamp of when the observation was done. Unix Epoch in seconds.",
       type: "number",
@@ -141,7 +106,13 @@ export const observationRequestSchema = {
       description: "A device identifier (the reporting device).",
       type: "string",
     },
-    position: positionSchema,
+    position: {
+      description: "A GeoJSON position for the observation.",
+      items: {
+        type: "number",
+      },
+      type: "array",
+    },
     timestamp: {
       description: "A timestamp of when the observation was done. Unix Epoch in seconds.",
       type: "number",
@@ -171,7 +142,13 @@ export const observationBaseSchema = {
       description: "A device identifier (the reporting device).",
       type: "string",
     },
-    position: positionSchema,
+    position: {
+      description: "A GeoJSON position for the observation.",
+      items: {
+        type: "number",
+      },
+      type: "array",
+    },
     timestamp: {
       description: "A timestamp of when the observation was done. Unix Epoch in seconds.",
       type: "number",
@@ -231,90 +208,6 @@ export const bicyclePathsRequestSchema = {
   type: "object",
 };
 
-export const geoJsonMultiLineStringSchema = {
-  additionalProperties: false,
-  description: "MultiLineString geometry object. https://tools.ietf.org/html/rfc7946#section-3.1.5",
-  properties: {
-    bbox: {
-      anyOf: [{
-          additionalItems: {
-            anyOf: [{
-                type: "number",
-              }, {
-                type: "number",
-              }, {
-                type: "number",
-              }, {
-                type: "number",
-              }],
-          },
-          items: [{
-              type: "number",
-            }, {
-              type: "number",
-            }, {
-              type: "number",
-            }, {
-              type: "number",
-            }],
-          minItems: 4,
-          type: "array",
-        }, {
-          additionalItems: {
-            anyOf: [{
-                type: "number",
-              }, {
-                type: "number",
-              }, {
-                type: "number",
-              }, {
-                type: "number",
-              }, {
-                type: "number",
-              }, {
-                type: "number",
-              }],
-          },
-          items: [{
-              type: "number",
-            }, {
-              type: "number",
-            }, {
-              type: "number",
-            }, {
-              type: "number",
-            }, {
-              type: "number",
-            }, {
-              type: "number",
-            }],
-          minItems: 6,
-          type: "array",
-        }],
-      description: "Bounding box of the coordinate range of the object's Geometries, Features, or Feature Collections. https://tools.ietf.org/html/rfc7946#section-5",
-    },
-    coordinates: {
-      items: {
-        items: {
-          items: {
-            type: "number",
-          },
-          type: "array",
-        },
-        type: "array",
-      },
-      type: "array",
-    },
-    type: {
-      description: "Specifies the type of GeoJSON object.",
-      enum: ["MultiLineString"],
-      type: "string",
-    },
-  },
-  required: ["coordinates", "type"],
-  type: "object",
-};
-
 export const bicyclePathTypeSchema = {
   enum: ["accotement-asphalte", "bande-cycleable", "chaussee-designee", "piste-cyclable-rue", "piste-cyclable-site-propre", "piste-cyclable-trottoir", "sentier-polyvalent", "unknown", "velorue"],
   type: "string",
@@ -339,7 +232,30 @@ export const bicyclePathSchema = {
       type: "string",
     },
     divider: bicyclePathDividerSchema,
-    geometry: geoJsonMultiLineStringSchema,
+    geometry: {
+      additionalProperties: false,
+      description: "The GeoJson geometry.",
+      properties: {
+        coordinates: {
+          items: {
+            items: {
+              items: {
+                type: "number",
+              },
+              type: "array",
+            },
+            type: "array",
+          },
+          type: "array",
+        },
+        type: {
+          enum: ["MultiLineString"],
+          type: "string",
+        },
+      },
+      required: ["coordinates", "type"],
+      type: "object",
+    },
     id: {
       description: "Unique id for the bicycle path",
       type: "string",

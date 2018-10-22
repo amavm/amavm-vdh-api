@@ -6,6 +6,7 @@ import {
 } from "uno-serverless";
 
 export interface BicyclePathsService {
+  delete(id: string): Promise<void>;
   get(id: string): Promise<BicyclePath | undefined>;
   findAll(): Promise<BicyclePath[]>;
   find(request: BicyclePathsRequest): Promise<ContinuationArray<BicyclePath>>;
@@ -55,6 +56,11 @@ export class MongoDbBicyclePathsService implements BicyclePathsService, CheckHea
             });
         });
       });
+  }
+
+  public async delete(id: string): Promise<void> {
+    const db = await this.lazyDb();
+    await db.collection(BICYCLE_PATH_COLLECTION).deleteOne({ id });
   }
 
   public async get(id: string): Promise<BicyclePath | undefined> {

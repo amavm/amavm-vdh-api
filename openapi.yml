@@ -8,7 +8,9 @@ tags:
   - name: Api
     description: Operations related to general API operations
   - name: Bicycle Paths
-    description: Operations related to Bicycle Paths
+    description: Operations related to Bicycle
+  - name: Observations
+    description: Operations related to observations
 paths:
   /info:
     get:
@@ -82,7 +84,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HealthCheckResult'
-                
   /api/v1/bicycle-paths:
     get:
       summary: Retrieve the list of bicycle paths
@@ -137,28 +138,26 @@ paths:
                   - items
         5XX:
           $ref: '#/components/responses/internalServerError'
-  /api/v1/bicycle-paths/{bicyclePathId}/observations/snow-removal:
+  /api/v1/observations:
     post:
       summary: Post a new observation about snow removal
       tags:
-        - Bicycle Paths
-      parameters:
-        - name: bicyclePathId
-          description: The id of the bicycle path.
-          in: path
-          required: true
-          schema:
-            type: string
+        - Observations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ObservationRequest'
       responses:
         '200':
-          description: The updated bicycle path
+          description: The reported observation
           headers:
             x-amzn-RequestId:
               $ref: '#/components/headers/x-amzn-RequestId'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BicyclePath'
+                $ref: '#/components/schemas/ReportedObservation'
         '400':
           $ref: '#/components/responses/badRequest'
         '404':
@@ -303,17 +302,28 @@ components:
           description: The name of the borough.
           type: string
         divider:
+          $ref: '#/components/schemas/BicyclePathDivider'
           description: The divider type.
-          enum:
-            - C
-            - D
-            - J
-            - M
-            - P
-          type: string
         geometry:
-          $ref: '#/components/schemas/GeoJSON.MultiLineString'
           description: The GeoJson geometry.
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - MultiLineString
+            coordinates:
+              type: array
+              items:
+                type: array
+                items:
+                  type: array
+                  items:
+                    type: number
+          additionalProperties: false
+          required:
+            - coordinates
+            - type
         id:
           description: Unique id for the bicycle path
           type: string
@@ -323,68 +333,61 @@ components:
         numberOfLanes:
           description: The number of lanes
           type: number
-        status:
-          type: object
-          properties:
-            snowRemoval:
-              type: object
-              properties:
-                status:
-                  $ref: '#/components/schemas/BicyclePathSnowRemovalStatus'
-                timestamp:
-                  type: number
-              additionalProperties: false
-              required:
-                - status
-          additionalProperties: false
-          required:
-            - snowRemoval
+        network:
+          $ref: '#/components/schemas/BicyclePathNetwork'
+          description: Which network does this bicycle path belong to.
         type:
           $ref: '#/components/schemas/BicyclePathType'
           description: The type of bicycle path
       additionalProperties: false
       required:
         - borough
+        - divider
         - geometry
         - id
         - length
+        - network
         - numberOfLanes
-        - status
         - type
     BicyclePathDivider:
       enum:
-        - C
-        - D
-        - J
-        - M
-        - P
+        - cloture
+        - delineateur
+        - jersey
+        - mail
+        - marquage-sol
+        - unknown
       type: string
-    BicyclePathSnowRemovalStatus:
+    BicyclePathNetwork:
       enum:
-        - clean
-        - full
-        - partially
+        - 3-seasons
+        - 4-seasons
         - unknown
       type: string
     BicyclePathType:
       enum:
-        - 1
-        - 2
-        - 3
-        - 4
-        - 5
-        - 6
-        - 7
-        - 8
-      type: number
+        - accotement-asphalte
+        - bande-cycleable
+        - chaussee-designee
+        - piste-cyclable-rue
+        - piste-cyclable-site-propre
+        - piste-cyclable-trottoir
+        - sentier-polyvalent
+        - unknown
+        - velorue
+      type: string
     BicyclePathsRequest:
       type: object
       properties:
         bbox:
+          maximum: 8
+          minimum: 8
           type: array
           items:
             type: number
         near:
+          maximum: 2
+          minimum: 2
           type: array
           items:
             type: number
@@ -392,27 +395,157 @@ components:
           description: The next continuation token.
           type: string
       additionalProperties: false
-    GeoJSON.MultiLineString:
-      description: |-
-        MultiLineString geometry object.
-        https://tools.ietf.org/html/rfc7946#section-3.1.5
+    ObservationAssetBase:
       type: object
       properties:
-        type:
-          description: Specifies the type of GeoJSON object.
+        contentType:
+          description: The asset content-type
           type: string
-          enum:
-            - MultiLineString
-        coordinates:
-          type: array
-          items:
-            type: array
-            items:
-              type: array
-              items:
-                type: number
-
       additionalProperties: false
       required:
-        - coordinates
-        - type
+        - contentType
+    ObservationAttributes:
+      enum:
+        - ice
+        - snow
+      type: string
+    ObservationBase:
+      description: Base definition for observations.
+      type: object
+      properties:
+        attributes:
+          description: Attributes to further characterize the observation.
+          type: array
+          items:
+            enum:
+              - ice
+              - snow
+            type: string
+        comment:
+          description: Free-form comments.
+          type: string
+        deviceId:
+          description: A device identifier (the reporting device).
+          type: string
+        position:
+          description: A GeoJSON position for the observation.
+          type: array
+          items:
+            type: number
+        timestamp:
+          description: A timestamp of when the observation was done. Unix Epoch in seconds.
+          type: number
+      additionalProperties: false
+      required:
+        - attributes
+        - deviceId
+        - position
+        - timestamp
+    ObservationRequest:
+      description: Request to submit an observation.
+      type: object
+      properties:
+        assets:
+          description: Attached assets.
+          type: array
+          items:
+            $ref: '#/components/schemas/ObservationRequestAsset'
+        attributes:
+          description: Attributes to further characterize the observation.
+          type: array
+          items:
+            enum:
+              - ice
+              - snow
+            type: string
+        comment:
+          description: Free-form comments.
+          type: string
+        deviceId:
+          description: A device identifier (the reporting device).
+          type: string
+        position:
+          description: A GeoJSON position for the observation.
+          type: array
+          items:
+            type: number
+        timestamp:
+          description: A timestamp of when the observation was done. Unix Epoch in seconds.
+          type: number
+      additionalProperties: false
+      required:
+        - attributes
+        - deviceId
+        - position
+        - timestamp
+    ObservationRequestAsset:
+      description: An asset submitted alongside an ObservationRequest.
+      type: object
+      properties:
+        data:
+          description: Base-64 encoded data.
+          type: string
+        contentType:
+          description: The asset content-type
+          type: string
+      additionalProperties: false
+      required:
+        - contentType
+        - data
+    ObservationStatus:
+      description: Status for an observation.
+      enum:
+        - ko
+        - ok
+      type: string
+    ReportedObservation:
+      description: A reported observation
+      type: object
+      properties:
+        assets:
+          description: Associated assets.
+          type: array
+          items:
+            $ref: '#/components/schemas/ReportedObservationAsset'
+        attributes:
+          description: Attributes to further characterize the observation.
+          type: array
+          items:
+            enum:
+              - ice
+              - snow
+            type: string
+        comment:
+          description: Free-form comments.
+          type: string
+        deviceId:
+          description: A device identifier (the reporting device).
+          type: string
+        position:
+          description: A GeoJSON position for the observation.
+          type: array
+          items:
+            type: number
+        timestamp:
+          description: A timestamp of when the observation was done. Unix Epoch in seconds.
+          type: number
+      additionalProperties: false
+      required:
+        - attributes
+        - deviceId
+        - position
+        - timestamp
+    ReportedObservationAsset:
+      description: An asset attached alongside a ReportedObservation.
+      type: object
+      properties:
+        url:
+          description: Base-64 encoded data.
+          type: string
+        contentType:
+          description: The asset content-type
+          type: string
+      additionalProperties: false
+      required:
+        - contentType
+        - url

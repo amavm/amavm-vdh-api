@@ -1,6 +1,7 @@
 import { Config } from "@config";
 import { BicyclePathsService, MongoDbBicyclePathsService } from "@services/bicycle-paths.service";
 import { GeoSourceService, MTLOpenDataGeoSourceService } from "@services/geo-source.service";
+import { ObservationsService } from "@services/observations.service";
 import { DefaultSyncService, SyncService } from "@services/sync.service";
 import * as uno from "uno-serverless";
 import { httpClientFactory } from "uno-serverless";
@@ -18,6 +19,7 @@ export interface Container {
   environmentName(): string;
   executionMode(): ExecutionMode;
   geoSourceService(): GeoSourceService;
+  observationsService(): ObservationsService;
   syncService(): SyncService;
 }
 
@@ -47,6 +49,8 @@ export const createContainer = uno.createContainerFactory<Container, ContainerOp
   geoSourceService: ({ container }) => new MTLOpenDataGeoSourceService(
     { bicyclePathsSourceUrl: container.configService().get(Config.MTLOpenDataBicyclePathUrl) },
     httpClientFactory()),
+
+  observationsService: () => { throw new Error(); },
 
   syncService: ({ container }) => new DefaultSyncService(
     container.geoSourceService(),
