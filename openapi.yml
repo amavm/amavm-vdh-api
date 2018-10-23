@@ -8,6 +8,8 @@ info:
 servers: 
   - url: http://localhost:3000
     description: Localhost execution
+  - url: https://ohp6vrr7xd.execute-api.ca-central-1.amazonaws.com/dev
+    description: Dev environment
 
 tags:
   - name: Api

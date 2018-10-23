@@ -90,7 +90,7 @@ export const reportedObservationSchema = {
       type: "number",
     },
   },
-  required: ["attributes", "deviceId", "id", "position", "timestamp"],
+  required: ["deviceId", "id", "position", "timestamp"],
   type: "object",
 };
 
@@ -148,7 +148,7 @@ export const observationRequestSchema = {
       type: "number",
     },
   },
-  required: ["attributes", "deviceId", "position", "timestamp"],
+  required: ["deviceId", "position", "timestamp"],
   type: "object",
 };
 
@@ -184,7 +184,7 @@ export const observationBaseSchema = {
       type: "number",
     },
   },
-  required: ["attributes", "deviceId", "position", "timestamp"],
+  required: ["deviceId", "position", "timestamp"],
   type: "object",
 };
 

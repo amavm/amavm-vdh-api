@@ -90,5 +90,7 @@ functions:
 
   sync:
     handler: src/handlers/sync.handler
+    timeout: 300
+    memorySize: 2048
 
 resources: ${file(cf-resources.yml):resources}
