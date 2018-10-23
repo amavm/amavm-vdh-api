@@ -6,6 +6,7 @@ import {
   CheckHealth, checkHealth, ContinuationArray, decodeNextToken,
   encodeNextToken, HealthCheckResult, lazyAsync, validationError,
 } from "uno-serverless";
+import { AssetsService } from "./assets.service";
 
 export interface ObservationsService {
   find(request: GetObservationsRequest): Promise<ContinuationArray<ReportedObservation>>;
@@ -36,7 +37,9 @@ export class MongoDbObservationsService implements ObservationsService, CheckHea
 
   private readonly lazyDb = lazyAsync(async () => (await this.lazyClient()).db(await this.options.db));
 
-  public constructor(private readonly options: MongoDbBicyclePathsServiceOptions) { }
+  public constructor(
+    private readonly options: MongoDbBicyclePathsServiceOptions,
+    private readonly assetsService: AssetsService) { }
 
   public async checkHealth(): Promise<HealthCheckResult> {
     return checkHealth(
@@ -157,7 +160,14 @@ export class MongoDbObservationsService implements ObservationsService, CheckHea
       timestamp: request.timestamp,
     };
 
-    const response = await db.collection(OBSERVATIONS_COLLECTION).insertOne(reportedObs);
+    if (request.assets && request.assets.length > 0) {
+      reportedObs.assets = [];
+      for (const asset of request.assets) {
+        reportedObs.assets.push(await this.assetsService.upload(asset));
+      }
+    }
+
+    await db.collection(OBSERVATIONS_COLLECTION).insertOne(reportedObs);
     return this.mapObservation(reportedObs);
   }
 

@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.339.0",
+    "mime-types": "^2.1.21",
     "mongodb": "^3.1.8",
     "proj4": "^2.5.0",
     "source-map-support": "^0.5.9",
@@ -43,6 +44,7 @@
     "@types/chai": "^4.1.6",
     "@types/faker": "^4.1.4",
     "@types/geojson": "^7946.0.4",
+    "@types/mime-types": "^2.1.0",
     "@types/mocha": "^5.2.5",
     "@types/mongodb": "^3.1.12",
     "@types/nock": "^9.3.0",

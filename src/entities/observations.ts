@@ -12,12 +12,16 @@ export enum ObservationAttributes {
   Ice = "ice",
 }
 
+export enum AssetContentType {
+  Jpeg = "image/jpeg",
+  Png = "image/png",
+}
+
 export interface ObservationAssetBase {
   /**
    * The asset content-type
-   * @example image/jpeg
    */
-  contentType: string;
+  contentType: AssetContentType;
 }
 
 /** An asset submitted alongside an ObservationRequest. */
