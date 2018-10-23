@@ -6,6 +6,32 @@
  */
 // tslint:disable
 
+export const getObservationsRequestSortSchema = {
+  enum: ["timestamp-asc", "timestamp-desc"],
+  type: "string",
+};
+
+export const getObservationsRequestSchema = {
+  additionalProperties: false,
+  properties: {
+    endTs: {
+      description: "The end timestamp. Unix Epoch in seconds.",
+      type: "number",
+    },
+    nextToken: {
+      description: "The next continuation token.",
+      type: "string",
+    },
+    sort: getObservationsRequestSortSchema,
+    startTs: {
+      description: "The start timestamp. Unix Epoch in seconds.",
+      type: "number",
+    },
+  },
+  required: ["sort"],
+  type: "object",
+};
+
 export const reportedObservationAssetSchema = {
   additionalProperties: false,
   description: "An asset attached alongside a ReportedObservation.",
@@ -48,6 +74,10 @@ export const reportedObservationSchema = {
       description: "A device identifier (the reporting device).",
       type: "string",
     },
+    id: {
+      description: "Unique id",
+      type: "string",
+    },
     position: {
       description: "A GeoJSON position for the observation. Be careful - GeoJson Positions are [long, lat, elevation]",
       items: {
@@ -60,7 +90,7 @@ export const reportedObservationSchema = {
       type: "number",
     },
   },
-  required: ["attributes", "deviceId", "position", "timestamp"],
+  required: ["attributes", "deviceId", "id", "position", "timestamp"],
   type: "object",
 };
 

@@ -4,6 +4,11 @@ info:
   description: |
     AMAVM VDH API
   version: 1.0.9999
+
+servers: 
+  - url: http://localhost:3000
+    description: Localhost execution
+
 tags:
   - name: Api
     description: Operations related to general API operations
@@ -139,6 +144,54 @@ paths:
         5XX:
           $ref: '#/components/responses/internalServerError'
   /api/v1/observations:
+    get:
+      summary: Get a list of observations
+      tags:
+        - Observations
+      parameters:
+        - name: endTs
+          description: The upper bound for timestamps in Unix Epoch (seconds).
+          in: query
+          schema:
+            type: number
+        - name: sort
+          description: The sort order.
+          in: query
+          schema:
+            $ref: '#/components/schemas/GetObservationsRequestSort'
+        - name: startTs
+          description: The lower bound for timestamps in Unix Epoch (seconds).
+          in: query
+          schema:
+            type: number
+        - name: nextToken
+          description: The continuation token for next results
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The reported observations
+          headers:
+            x-amzn-RequestId:
+              $ref: '#/components/headers/x-amzn-RequestId'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReportedObservation'
+                  nextToken:
+                    type: string
+                required:
+                  - items
+        '404':
+          $ref: '#/components/responses/notfound'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     post:
       summary: Post a new observation about snow removal
       tags:
@@ -534,6 +587,9 @@ components:
       description: A reported observation
       type: object
       properties:
+        id:
+          description: Unique id
+          type: string
         assets:
           description: Associated assets.
           type: array
@@ -567,6 +623,7 @@ components:
       required:
         - attributes
         - deviceId
+        - id
         - position
         - timestamp
     ReportedObservationAsset:
@@ -583,3 +640,26 @@ components:
       required:
         - contentType
         - url
+    GetObservationsRequest:
+      type: object
+      properties:
+        startTs:
+          description: The start timestamp. Unix Epoch in seconds.
+          type: number
+        endTs:
+          description: The end timestamp. Unix Epoch in seconds.
+          type: number
+        sort:
+          $ref: '#/components/schemas/GetObservationsRequestSort'
+          description: The sort order.
+        nextToken:
+          description: The next continuation token.
+          type: string
+      additionalProperties: false
+      required:
+        - sort
+    GetObservationsRequestSort:
+      enum:
+        - timestamp-asc
+        - timestamp-desc
+      type: string

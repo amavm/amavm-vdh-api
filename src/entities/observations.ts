@@ -1,4 +1,5 @@
 import { Position } from "geojson";
+import { WithContinuation } from "uno-serverless";
 
 /** Status for an observation. */
 export enum ObservationStatus {
@@ -34,7 +35,7 @@ export interface ReportedObservationAsset extends ObservationAssetBase {
 /** Base definition for observations. */
 export interface ObservationBase {
   /** Attributes to further characterize the observation. */
-  attributes: ObservationAttributes[];
+  attributes?: ObservationAttributes[];
   /** Free-form comments. */
   comment?: string;
   /** A device identifier (the reporting device). */
@@ -56,6 +57,24 @@ export interface ObservationRequest extends ObservationBase {
 
 /** A reported observation */
 export interface ReportedObservation extends ObservationBase {
+  /** Unique id */
+  id: string;
   /** Associated assets. */
   assets?: ReportedObservationAsset[];
+}
+
+export enum GetObservationsRequestSort {
+  TimestampAsc = "timestamp-asc",
+  TimestampDesc = "timestamp-desc",
+}
+
+export interface GetObservationsRequest extends WithContinuation {
+  /** The start timestamp. Unix Epoch in seconds. */
+  startTs?: number;
+
+  /** The end timestamp. Unix Epoch in seconds. */
+  endTs?: number;
+
+  /** The sort order. */
+  sort: GetObservationsRequestSort;
 }

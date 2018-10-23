@@ -8,5 +8,6 @@ export const handler = httpFunc()
     async ({ services }) => [
       services.bicyclePathsService() as any,
       services.configService() as any,
+      services.observationsService() as any,
     ],
   ));
