@@ -45,7 +45,7 @@ export class MTLOpenDataGeoSourceService implements GeoSourceService {
         borough: x.properties.NOM_ARR_VI,
         divider: this.convertDivider(x.properties.SEPARATEUR),
         geometry: {
-          coordinates: this.convertCoordinates(x.geometry.coordinates),
+          coordinates: x.geometry.coordinates,
           type: x.geometry.type,
         },
         id: Math.trunc(x.properties.ID).toString(),
@@ -64,6 +64,7 @@ export class MTLOpenDataGeoSourceService implements GeoSourceService {
     return result;
   }
 
+  /** This converts geojson coordinates when they are inappropriate. */
   private convertCoordinates(position: Position[][]): Position[][] {
     return position.map(
       (x) => x.map(

@@ -20,7 +20,7 @@ export interface MongoDbBicyclePathsServiceOptions {
 }
 
 export const BICYCLE_PATH_COLLECTION = "bicycle-paths";
-const DEFAULT_LIMIT = 500;
+const DEFAULT_LIMIT = 200;
 
 export class MongoDbBicyclePathsService implements BicyclePathsService, CheckHealth {
 
@@ -75,9 +75,13 @@ export class MongoDbBicyclePathsService implements BicyclePathsService, CheckHea
 
   public async find(request: BicyclePathsRequest): Promise<ContinuationArray<BicyclePath>> {
     const db = await this.lazyDb();
-    let pagination = decodeNextToken<Pagination>(request.nextToken);
-    if (!pagination) {
+    const nextToken = decodeNextToken<NextToken>(request.nextToken);
+    let pagination: Pagination;
+    if (!nextToken) {
       pagination = { skip: 0, limit: DEFAULT_LIMIT };
+    } else {
+      pagination = nextToken.pagination;
+      request = nextToken.request;
     }
 
     let query: any = {};
@@ -137,15 +141,50 @@ export class MongoDbBicyclePathsService implements BicyclePathsService, CheckHea
       };
     }
 
+    if (request.borough) {
+      query = {
+        ...query,
+        borough: request.borough,
+      };
+    }
+
+    if (request.network) {
+      query = {
+        ...query,
+        network: request.network,
+      };
+    }
+
+    if (request.numberOfLanes) {
+      query = {
+        ...query,
+        numberOfLanes: request.numberOfLanes,
+      };
+    }
+
+    if (request.type) {
+      query = {
+        ...query,
+        type: request.type,
+      };
+    }
+
     const result = await db.collection(BICYCLE_PATH_COLLECTION).find(query)
       .skip(pagination.skip)
       .limit(pagination.limit)
       .toArray();
 
     pagination.skip += pagination.limit;
+    request.nextToken = undefined;
+    const nextNextToken = result.length < pagination.limit
+      ? undefined
+      : encodeNextToken({
+        pagination,
+        request,
+      });
     return {
       items: result.map((x) => this.mapBp(x)),
-      nextToken: result.length < pagination.limit ? undefined : encodeNextToken(pagination),
+      nextToken: nextNextToken,
     };
   }
 
@@ -172,4 +211,9 @@ export class MongoDbBicyclePathsService implements BicyclePathsService, CheckHea
 interface Pagination {
   skip: number;
   limit: number;
+}
+
+interface NextToken {
+  request: BicyclePathsRequest;
+  pagination: Pagination;
 }

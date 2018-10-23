@@ -36,7 +36,10 @@ export interface BicyclePath {
   /** The divider type. */
   divider: BicyclePathDivider;
 
-  /** The GeoJson geometry. */
+  /**
+   * The GeoJson geometry.
+   * Be careful - GeoJson Positions are [long, lat, elevation]
+   */
   geometry: {
     type: "MultiLineString";
     coordinates: Position[][];
@@ -65,9 +68,21 @@ export interface BicyclePathsRequest extends WithContinuation {
    */
   bbox?: number[];
 
+  /** The name of the borough to filter. */
+  borough?: string;
+
   /**
    * @maximum 2
    * @minimum 2
    */
   near?: number[];
+
+  /** The number of lanes */
+  numberOfLanes?: number;
+
+  /** Which network does this bicycle path belong to. */
+  network?: BicyclePathNetwork;
+
+  /** The type of bicycle path */
+  type?: BicyclePathType;
 }

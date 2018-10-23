@@ -39,7 +39,10 @@ export interface ObservationBase {
   comment?: string;
   /** A device identifier (the reporting device). */
   deviceId: string;
-  /** A GeoJSON position for the observation. */
+  /**
+   * A GeoJSON position for the observation.
+   * Be careful - GeoJson Positions are [long, lat, elevation]
+   */
   position: Position;
   /** A timestamp of when the observation was done. Unix Epoch in seconds. */
   timestamp: number;

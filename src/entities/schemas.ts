@@ -49,7 +49,7 @@ export const reportedObservationSchema = {
       type: "string",
     },
     position: {
-      description: "A GeoJSON position for the observation.",
+      description: "A GeoJSON position for the observation. Be careful - GeoJson Positions are [long, lat, elevation]",
       items: {
         type: "number",
       },
@@ -107,7 +107,7 @@ export const observationRequestSchema = {
       type: "string",
     },
     position: {
-      description: "A GeoJSON position for the observation.",
+      description: "A GeoJSON position for the observation. Be careful - GeoJson Positions are [long, lat, elevation]",
       items: {
         type: "number",
       },
@@ -143,7 +143,7 @@ export const observationBaseSchema = {
       type: "string",
     },
     position: {
-      description: "A GeoJSON position for the observation.",
+      description: "A GeoJSON position for the observation. Be careful - GeoJson Positions are [long, lat, elevation]",
       items: {
         type: "number",
       },
@@ -192,6 +192,10 @@ export const bicyclePathsRequestSchema = {
       minimum: 8,
       type: "array",
     },
+    borough: {
+      description: "The name of the borough to filter.",
+      type: "string",
+    },
     near: {
       items: {
         type: "number",
@@ -200,8 +204,22 @@ export const bicyclePathsRequestSchema = {
       minimum: 2,
       type: "array",
     },
+    network: {
+      description: "Which network does this bicycle path belong to.",
+      enum: ["3-seasons", "4-seasons", "unknown"],
+      type: "string",
+    },
     nextToken: {
       description: "The next continuation token.",
+      type: "string",
+    },
+    numberOfLanes: {
+      description: "The number of lanes",
+      type: "number",
+    },
+    type: {
+      description: "The type of bicycle path",
+      enum: ["accotement-asphalte", "bande-cycleable", "chaussee-designee", "piste-cyclable-rue", "piste-cyclable-site-propre", "piste-cyclable-trottoir", "sentier-polyvalent", "unknown", "velorue"],
       type: "string",
     },
   },
@@ -234,7 +252,7 @@ export const bicyclePathSchema = {
     divider: bicyclePathDividerSchema,
     geometry: {
       additionalProperties: false,
-      description: "The GeoJson geometry.",
+      description: "The GeoJson geometry. Be careful - GeoJson Positions are [long, lat, elevation]",
       properties: {
         coordinates: {
           items: {

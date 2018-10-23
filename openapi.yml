@@ -305,7 +305,9 @@ components:
           $ref: '#/components/schemas/BicyclePathDivider'
           description: The divider type.
         geometry:
-          description: The GeoJson geometry.
+          description: |-
+            The GeoJson geometry.
+            Be careful - GeoJson Positions are [long, lat, elevation]
           type: object
           properties:
             type:
@@ -385,12 +387,38 @@ components:
           type: array
           items:
             type: number
+        borough:
+          description: The name of the borough to filter.
+          type: string
         near:
           maximum: 2
           minimum: 2
           type: array
           items:
             type: number
+        numberOfLanes:
+          description: The number of lanes
+          type: number
+        network:
+          description: Which network does this bicycle path belong to.
+          enum:
+            - 3-seasons
+            - 4-seasons
+            - unknown
+          type: string
+        type:
+          description: The type of bicycle path
+          enum:
+            - accotement-asphalte
+            - bande-cycleable
+            - chaussee-designee
+            - piste-cyclable-rue
+            - piste-cyclable-site-propre
+            - piste-cyclable-trottoir
+            - sentier-polyvalent
+            - unknown
+            - velorue
+          type: string
         nextToken:
           description: The next continuation token.
           type: string
@@ -428,7 +456,9 @@ components:
           description: A device identifier (the reporting device).
           type: string
         position:
-          description: A GeoJSON position for the observation.
+          description: |-
+            A GeoJSON position for the observation.
+            Be careful - GeoJson Positions are [long, lat, elevation]
           type: array
           items:
             type: number
@@ -465,7 +495,9 @@ components:
           description: A device identifier (the reporting device).
           type: string
         position:
-          description: A GeoJSON position for the observation.
+          description: |-
+            A GeoJSON position for the observation.
+            Be careful - GeoJson Positions are [long, lat, elevation]
           type: array
           items:
             type: number
@@ -522,7 +554,9 @@ components:
           description: A device identifier (the reporting device).
           type: string
         position:
-          description: A GeoJSON position for the observation.
+          description: |-
+            A GeoJSON position for the observation.
+            Be careful - GeoJson Positions are [long, lat, elevation]
           type: array
           items:
             type: number
