@@ -32,7 +32,7 @@ corsOptionsMethodResponses: &CORS_OPTIONS_METHOD_RESPONSES
       "method.response.header.Content-Type": true
 
 resources:
-  Description: AMAVM Bycicle Path Snow Removal API for the ${opt:stage} environment.
+  Description: AMAVM VDH API for the ${opt:stage} environment.
 
   Resources:
 
@@ -57,6 +57,51 @@ resources:
             Value: ${self:custom.environment}-${self:service}
           - Name: Stage
             Value: ${self:custom.environment}
+
+    # S3 assets
+    AssetsBucket:
+      Type: AWS::S3::Bucket
+      DeletionPolicy: Retain
+      Properties:
+        BucketEncryption:
+          ServerSideEncryptionConfiguration:
+            - ServerSideEncryptionByDefault:
+                SSEAlgorithm: AES256
+        BucketName: ${self:custom.config.bucket}
+        Tags: *TAGS
+        VersioningConfiguration:
+          Status: Enabled
+        WebsiteConfiguration:
+          IndexDocument: index.html
+
+    SSMParameterAssetsBucketWebsiteURL:
+      Type: "AWS::SSM::Parameter"
+      Properties:
+        Name: ${self:custom.parameterStorePrefix}/assets/root
+        Type: String
+        Value:
+          Fn::GetAtt:
+            - AssetsBucket
+            - WebsiteURL
+
+    AssetsBucketPolicy: 
+      Type: AWS::S3::BucketPolicy
+      Properties: 
+        Bucket: 
+          Ref: AssetsBucket
+        PolicyDocument: 
+          Statement: 
+            - 
+              Action: 
+                - "s3:GetObject"
+              Effect: "Allow"
+              Resource: 
+                Fn::Join: 
+                  - ""
+                  - - "arn:aws:s3:::"
+                    - Ref: AssetsBucket
+                    - "/*"
+              Principal: "*"
 
     # /info api endpoint.
     ApiGatewayResourceInfo:

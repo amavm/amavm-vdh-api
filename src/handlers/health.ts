@@ -6,6 +6,7 @@ export const handler = httpFunc()
   .handler(health<Container>(
     SERVICE_NAME,
     async ({ services }) => [
+      services.assetsService() as any,
       services.bicyclePathsService() as any,
       services.configService() as any,
       services.observationsService() as any,

@@ -32,14 +32,16 @@ export const getObservationsRequestSchema = {
   type: "object",
 };
 
+export const assetContentTypeSchema = {
+  enum: ["image/jpeg", "image/png"],
+  type: "string",
+};
+
 export const reportedObservationAssetSchema = {
   additionalProperties: false,
   description: "An asset attached alongside a ReportedObservation.",
   properties: {
-    contentType: {
-      description: "The asset content-type",
-      type: "string",
-    },
+    contentType: assetContentTypeSchema,
     url: {
       description: "Base-64 encoded data.",
       type: "string",
@@ -98,10 +100,7 @@ export const observationRequestAssetSchema = {
   additionalProperties: false,
   description: "An asset submitted alongside an ObservationRequest.",
   properties: {
-    contentType: {
-      description: "The asset content-type",
-      type: "string",
-    },
+    contentType: assetContentTypeSchema,
     data: {
       description: "Base-64 encoded data.",
       type: "string",
@@ -191,10 +190,7 @@ export const observationBaseSchema = {
 export const observationAssetBaseSchema = {
   additionalProperties: false,
   properties: {
-    contentType: {
-      description: "The asset content-type",
-      type: "string",
-    },
+    contentType: assetContentTypeSchema,
   },
   required: ["contentType"],
   type: "object",

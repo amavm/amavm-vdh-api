@@ -1,4 +1,5 @@
 import { Config } from "@config";
+import { AssetsService, DummyLocalAssetsService, S3AssetsService } from "@services/assets.service";
 import { BicyclePathsService, MongoDbBicyclePathsService } from "@services/bicycle-paths.service";
 import { GeoSourceService, MTLOpenDataGeoSourceService } from "@services/geo-source.service";
 import { MongoDbObservationsService, ObservationsService } from "@services/observations.service";
@@ -14,6 +15,7 @@ export enum ExecutionMode {
 
 /** The specification for the container. */
 export interface Container {
+  assetsService(): AssetsService;
   bicyclePathsService(): BicyclePathsService;
   configService(): uno.ConfigService;
   environmentName(): string;
@@ -31,6 +33,13 @@ export interface ContainerOptions {
 
 /** Definition of factories for the container. */
 export const createContainer = uno.createContainerFactory<Container, ContainerOptions>({
+  assetsService: ({ container, options }) => options.mode === ExecutionMode.LocalDev
+    ? new DummyLocalAssetsService()
+    : new S3AssetsService({
+      bucket: container.configService().get(Config.AssetsBucket),
+      websiteRoot: container.configService().get(Config.AssetsRoot),
+    }),
+
   bicyclePathsService: ({ container }) => new MongoDbBicyclePathsService({
     db: container.configService().get(Config.MongoDbDb),
     url: container.configService().get(Config.MongoDbUrl),
@@ -50,10 +59,12 @@ export const createContainer = uno.createContainerFactory<Container, ContainerOp
     { bicyclePathsSourceUrl: container.configService().get(Config.MTLOpenDataBicyclePathUrl) },
     httpClientFactory()),
 
-  observationsService: ({ container }) => new MongoDbObservationsService({
-    db: container.configService().get(Config.MongoDbDb),
-    url: container.configService().get(Config.MongoDbUrl),
-  }),
+  observationsService: ({ container }) => new MongoDbObservationsService(
+    {
+      db: container.configService().get(Config.MongoDbDb),
+      url: container.configService().get(Config.MongoDbUrl),
+    },
+    container.assetsService()),
 
   syncService: ({ container }) => new DefaultSyncService(
     container.geoSourceService(),
