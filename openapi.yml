@@ -4,13 +4,11 @@ info:
   description: |
     AMAVM VDH API
   version: 1.0.9999
-
-servers: 
-  - url: http://localhost:3000
+servers:
+  - url: 'http://localhost:3000'
     description: Localhost execution
-  - url: https://ohp6vrr7xd.execute-api.ca-central-1.amazonaws.com/dev
+  - url: 'https://ohp6vrr7xd.execute-api.ca-central-1.amazonaws.com/dev'
     description: Dev environment
-
 tags:
   - name: Api
     description: Operations related to general API operations
@@ -108,6 +106,11 @@ paths:
             maximum: 8
           style: form
           explode: false
+        - name: borough
+          description: The name of the borough to restrict it to
+          in: query
+          schema:
+            type: string
         - name: near
           description: A single coordinate to indicate center position
           in: query
@@ -119,11 +122,26 @@ paths:
             maximum: 2
           style: form
           explode: false
+        - name: network
+          description: The network that the path belongs to
+          in: query
+          schema:
+            $ref: '#/components/schemas/BicyclePathNetwork'
         - name: nextToken
           description: The continuation token for next results
           in: query
           schema:
             type: string
+        - name: numberofLanes
+          description: The number of lanes
+          in: query
+          schema:
+            type: integer
+        - name: type
+          description: The type of bicycle path
+          in: query
+          schema:
+            $ref: '#/components/schemas/BicyclePathType'
       responses:
         '200':
           description: The list of bicycle paths
@@ -482,8 +500,8 @@ components:
       type: object
       properties:
         contentType:
+          $ref: '#/components/schemas/AssetContentType'
           description: The asset content-type
-          type: string
       additionalProperties: false
       required:
         - contentType
@@ -522,7 +540,6 @@ components:
           type: number
       additionalProperties: false
       required:
-        - attributes
         - deviceId
         - position
         - timestamp
@@ -561,7 +578,6 @@ components:
           type: number
       additionalProperties: false
       required:
-        - attributes
         - deviceId
         - position
         - timestamp
@@ -573,8 +589,8 @@ components:
           description: Base-64 encoded data.
           type: string
         contentType:
+          $ref: '#/components/schemas/AssetContentType'
           description: The asset content-type
-          type: string
       additionalProperties: false
       required:
         - contentType
@@ -623,7 +639,6 @@ components:
           type: number
       additionalProperties: false
       required:
-        - attributes
         - deviceId
         - id
         - position
@@ -636,8 +651,8 @@ components:
           description: Base-64 encoded data.
           type: string
         contentType:
+          $ref: '#/components/schemas/AssetContentType'
           description: The asset content-type
-          type: string
       additionalProperties: false
       required:
         - contentType
@@ -664,4 +679,9 @@ components:
       enum:
         - timestamp-asc
         - timestamp-desc
+      type: string
+    AssetContentType:
+      enum:
+        - image/jpeg
+        - image/png
       type: string
