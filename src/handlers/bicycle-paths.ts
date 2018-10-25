@@ -14,6 +14,7 @@ export const handler = httpFunc()
                 .map((x) => parseFloat(x))
             : undefined,
           borough: event.parameters.borough,
+          limit: event.parameters.limit ? parseInt(event.parameters.limit, 10) : undefined,
           near: event.parameters.near
             ? event.parameters.near.split(",")
               .map((x) => x.trim())

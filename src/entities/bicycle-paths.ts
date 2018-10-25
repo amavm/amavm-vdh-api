@@ -71,6 +71,9 @@ export interface BicyclePathsRequest extends WithContinuation {
   /** The name of the borough to filter. */
   borough?: string;
 
+  /** The number of returned elements in one shot. */
+  limit?: number;
+
   /**
    * @maximum 2
    * @minimum 2

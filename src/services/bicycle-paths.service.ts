@@ -78,7 +78,7 @@ export class MongoDbBicyclePathsService implements BicyclePathsService, CheckHea
     const nextToken = decodeNextToken<NextToken>(request.nextToken);
     let pagination: Pagination;
     if (!nextToken) {
-      pagination = { skip: 0, limit: DEFAULT_LIMIT };
+      pagination = { skip: 0, limit: request.limit || DEFAULT_LIMIT };
     } else {
       pagination = nextToken.pagination;
       request = nextToken.request;

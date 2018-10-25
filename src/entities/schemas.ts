@@ -222,6 +222,10 @@ export const bicyclePathsRequestSchema = {
       description: "The name of the borough to filter.",
       type: "string",
     },
+    limit: {
+      description: "The number of returned elements in one shot.",
+      type: "number",
+    },
     near: {
       items: {
         type: "number",
