@@ -32,11 +32,11 @@ export class MTLOpenDataGeoSourceService implements GeoSourceService {
       await this.options.bicyclePathsSourceUrl,
       {
         // Data is windows 1252-encoded. Thx MTL.
-        responseType: "arraybuffer",
+        /*responseType: "arraybuffer",
         transformResponse: (res) => {
           const rawStr = new Uint8Array(res).reduce((acc, cur) => acc + String.fromCharCode(cur), "");
           return JSON.parse(windows1252.decode(rawStr));
-        },
+        },*/
       });
 
     const result = response.data.features
