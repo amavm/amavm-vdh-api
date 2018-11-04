@@ -31,5 +31,8 @@ export const handler = httpFunc()
 
         return noContent();
       },
+      get: async ({ event, services: { observationsService } }) => {
+        return observationsService().get(event.parameters.observationId);
+      },
     },
   }));

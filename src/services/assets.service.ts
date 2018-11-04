@@ -52,7 +52,7 @@ export class S3AssetsService implements AssetsService, CheckHealth {
       await this.s3.deleteObject({
         Bucket: await this.options.bucket,
         Key: key,
-      });
+      }).promise();
     } catch (error) {
       if (error.statusCode === HttpStatusCodes.NOT_FOUND) {
         return undefined;

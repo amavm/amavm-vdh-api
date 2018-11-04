@@ -243,7 +243,31 @@ paths:
           $ref: '#/components/responses/notfound'
         5XX:
           $ref: '#/components/responses/internalServerError'
-  /api/v1/observations/{observationId}:
+  '/api/v1/observations/{observationId}':
+    get:
+      summary: Get a single observation
+      tags:
+        - Observations
+      parameters:
+        - name: observationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The observation
+          headers:
+            x-amzn-RequestId:
+              $ref: '#/components/headers/x-amzn-RequestId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportedObservation'
+        '404':
+          $ref: '#/components/responses/notfound'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     delete:
       summary: Delete an observation
       tags:
@@ -394,6 +418,11 @@ components:
           description: 'Sub health checks, if any.'
           items:
             $ref: '#/components/schemas/HealthCheckResult'
+    AssetContentType:
+      enum:
+        - image/jpeg
+        - image/png
+      type: string
     BicyclePath:
       description: A bicycle path.
       type: object
@@ -490,6 +519,9 @@ components:
         borough:
           description: The name of the borough to filter.
           type: string
+        limit:
+          description: The number of returned elements in one shot.
+          type: number
         near:
           maximum: 2
           minimum: 2
@@ -523,6 +555,29 @@ components:
           description: The next continuation token.
           type: string
       additionalProperties: false
+    GetObservationsRequest:
+      type: object
+      properties:
+        startTs:
+          description: The start timestamp. Unix Epoch in seconds.
+          type: number
+        endTs:
+          description: The end timestamp. Unix Epoch in seconds.
+          type: number
+        sort:
+          $ref: '#/components/schemas/GetObservationsRequestSort'
+          description: The sort order.
+        nextToken:
+          description: The next continuation token.
+          type: string
+      additionalProperties: false
+      required:
+        - sort
+    GetObservationsRequestSort:
+      enum:
+        - timestamp-asc
+        - timestamp-desc
+      type: string
     ObservationAssetBase:
       type: object
       properties:
@@ -684,31 +739,3 @@ components:
       required:
         - contentType
         - url
-    GetObservationsRequest:
-      type: object
-      properties:
-        startTs:
-          description: The start timestamp. Unix Epoch in seconds.
-          type: number
-        endTs:
-          description: The end timestamp. Unix Epoch in seconds.
-          type: number
-        sort:
-          $ref: '#/components/schemas/GetObservationsRequestSort'
-          description: The sort order.
-        nextToken:
-          description: The next continuation token.
-          type: string
-      additionalProperties: false
-      required:
-        - sort
-    GetObservationsRequestSort:
-      enum:
-        - timestamp-asc
-        - timestamp-desc
-      type: string
-    AssetContentType:
-      enum:
-        - image/jpeg
-        - image/png
-      type: string

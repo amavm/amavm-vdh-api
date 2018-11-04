@@ -11,6 +11,7 @@ import { AssetsService } from "./assets.service";
 export interface ObservationsService {
   delete(observationId: string): Promise<void>;
   find(request: GetObservationsRequest): Promise<ContinuationArray<ReportedObservation>>;
+  get(observationId: string): Promise<ReportedObservation | undefined>;
   /** Reports an observation. */
   report(request: ObservationRequest): Promise<ReportedObservation>;
 }
@@ -150,6 +151,16 @@ export class MongoDbObservationsService implements ObservationsService, CheckHea
       items: result.map((x) => this.mapObservation(x)),
       nextToken: nextNextToken,
     };
+  }
+
+  public async get(observationId: string): Promise<ReportedObservation | undefined> {
+    const db = await this.lazyDb();
+    const result = await db.collection(OBSERVATIONS_COLLECTION).findOne({ id: observationId });
+    if (!result) {
+      return undefined;
+    }
+
+    return this.mapObservation(result);
   }
 
   public async report(request: ObservationRequest): Promise<ReportedObservation> {
