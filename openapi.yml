@@ -243,6 +243,27 @@ paths:
           $ref: '#/components/responses/notfound'
         5XX:
           $ref: '#/components/responses/internalServerError'
+  /api/v1/observations/{observationId}:
+    delete:
+      summary: Delete an observation
+      tags:
+        - Observations
+      parameters:
+        - name: observationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: The observation was deleted
+          headers:
+            x-amzn-RequestId:
+              $ref: '#/components/headers/x-amzn-RequestId'
+        '404':
+          $ref: '#/components/responses/notfound'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
 components:
   headers:
     x-amzn-RequestId:

@@ -1,14 +1,15 @@
 import {
-  GetObservationsRequest, GetObservationsRequestSort, ObservationRequest, ReportedObservation,
+  GetObservationsRequest, GetObservationsRequestSort, ObservationRequest, ReportedObservation, ReportedObservationAsset,
 } from "@entities/observations";
 import { MongoClient, MongoClientOptions, ObjectID } from "mongodb";
 import {
   CheckHealth, checkHealth, ContinuationArray, decodeNextToken,
-  encodeNextToken, HealthCheckResult, lazyAsync, validationError,
+  encodeNextToken, HealthCheckResult, lazyAsync, notFoundError, validationError,
 } from "uno-serverless";
 import { AssetsService } from "./assets.service";
 
 export interface ObservationsService {
+  delete(observationId: string): Promise<void>;
   find(request: GetObservationsRequest): Promise<ContinuationArray<ReportedObservation>>;
   /** Reports an observation. */
   report(request: ObservationRequest): Promise<ReportedObservation>;
@@ -59,6 +60,20 @@ export class MongoDbObservationsService implements ObservationsService, CheckHea
             });
         });
       });
+  }
+
+  public async delete(observationId: string): Promise<void> {
+    const db = await this.lazyDb();
+    const result = await db.collection(OBSERVATIONS_COLLECTION).findOneAndDelete({ id: observationId });
+    if (!result.ok) {
+      throw notFoundError("observationId", `Observation ${observationId} not found.`);
+    }
+
+    for (const asset of (result.value.assets || [])) {
+      this.assetsService.delete(asset.url);
+    }
+
+    throw notFoundError("observationId", `Observation ${observationId} not found.`);
   }
 
   public async find(request: GetObservationsRequest): Promise<ContinuationArray<ReportedObservation>> {

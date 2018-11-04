@@ -1,11 +1,12 @@
 import { ObservationRequestAsset, ReportedObservationAsset } from "@entities/observations";
 import { S3 } from "aws-sdk";
 import { extension } from "mime-types";
-import { CheckHealth, checkHealth } from "uno-serverless";
+import { CheckHealth, checkHealth, HttpStatusCodes } from "uno-serverless";
 import { URL } from "url";
 import { v4 as uuid } from "uuid";
 
 export interface AssetsService {
+  delete(url: string): Promise<void>;
   upload(asset: ObservationRequestAsset): Promise<ReportedObservationAsset>;
 }
 
@@ -43,6 +44,24 @@ export class S3AssetsService implements AssetsService, CheckHealth {
       });
   }
 
+  public async delete(url: string): Promise<void> {
+    const websiteRoot = await this.options.websiteRoot;
+    const key = url.slice(websiteRoot.length + 1);
+
+    try {
+      await this.s3.deleteObject({
+        Bucket: await this.options.bucket,
+        Key: key,
+      });
+    } catch (error) {
+      if (error.statusCode === HttpStatusCodes.NOT_FOUND) {
+        return undefined;
+      }
+
+      throw error;
+    }
+  }
+
   public async upload(asset: ObservationRequestAsset): Promise<ReportedObservationAsset> {
     const key = `${uuid()}.${extension(asset.contentType)}`;
     const response = await this.s3.upload({
@@ -67,6 +86,10 @@ export class DummyLocalAssetsService implements AssetsService, CheckHealth {
       "DummyLocalAssetsService",
       undefined,
       async () => { return; });
+  }
+
+  public async delete(url: string): Promise<void> {
+    return;
   }
 
   public async upload(asset: ObservationRequestAsset): Promise<ReportedObservationAsset> {

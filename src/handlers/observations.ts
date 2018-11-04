@@ -2,7 +2,7 @@ import { httpFunc } from "@common";
 import { Container } from "@container";
 import { GetObservationsRequest, GetObservationsRequestSort, ObservationRequest } from "@entities/observations";
 import { observationRequestSchema } from "@entities/schemas";
-import { httpRouter } from "uno-serverless";
+import { httpRouter, noContent } from "uno-serverless";
 
 export const handler = httpFunc()
   .handler(httpRouter<Container>({
@@ -23,6 +23,13 @@ export const handler = httpFunc()
         const request = event.body<ObservationRequest>({ validate: observationRequestSchema });
 
         return observationsService().report(request);
+      },
+    },
+    ":observationId": {
+      delete: async ({ event, services: { observationsService } }) => {
+        await observationsService().delete(event.parameters.observationId);
+
+        return noContent();
       },
     },
   }));
