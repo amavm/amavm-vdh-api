@@ -71,7 +71,9 @@ export class MongoDbObservationsService implements ObservationsService, CheckHea
     }
 
     for (const asset of (result.value.assets || [])) {
-      this.assetsService.delete(asset.url);
+      if (asset && asset.url) {
+        this.assetsService.delete(asset.url);
+      }
     }
   }
 
