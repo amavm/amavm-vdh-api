@@ -7,11 +7,6 @@ export enum ObservationStatus {
   Ko = "ko",
 }
 
-export enum ObservationAttributes {
-  Snow = "snow",
-  Ice = "ice",
-}
-
 export enum AssetContentType {
   Jpeg = "image/jpeg",
   Png = "image/png",
@@ -39,7 +34,7 @@ export interface ReportedObservationAsset extends ObservationAssetBase {
 /** Base definition for observations. */
 export interface ObservationBase {
   /** Attributes to further characterize the observation. */
-  attributes?: ObservationAttributes[];
+  attributes?: string[];
   /** Free-form comments. */
   comment?: string;
   /** A device identifier (the reporting device). */
