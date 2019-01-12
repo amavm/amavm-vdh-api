@@ -73,8 +73,6 @@ export class MongoDbObservationsService implements ObservationsService, CheckHea
     for (const asset of (result.value.assets || [])) {
       this.assetsService.delete(asset.url);
     }
-
-    throw notFoundError("observationId", `Observation ${observationId} not found.`);
   }
 
   public async find(request: GetObservationsRequest): Promise<ContinuationArray<ReportedObservation>> {
