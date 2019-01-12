@@ -587,11 +587,6 @@ components:
       additionalProperties: false
       required:
         - contentType
-    ObservationAttributes:
-      enum:
-        - ice
-        - snow
-      type: string
     ObservationBase:
       description: Base definition for observations.
       type: object
@@ -600,9 +595,6 @@ components:
           description: Attributes to further characterize the observation.
           type: array
           items:
-            enum:
-              - ice
-              - snow
             type: string
         comment:
           description: Free-form comments.
@@ -638,9 +630,6 @@ components:
           description: Attributes to further characterize the observation.
           type: array
           items:
-            enum:
-              - ice
-              - snow
             type: string
         comment:
           description: Free-form comments.
@@ -699,9 +688,6 @@ components:
           description: Attributes to further characterize the observation.
           type: array
           items:
-            enum:
-              - ice
-              - snow
             type: string
         comment:
           description: Free-form comments.

@@ -63,7 +63,6 @@ export const reportedObservationSchema = {
     attributes: {
       description: "Attributes to further characterize the observation.",
       items: {
-        enum: ["ice", "snow"],
         type: "string",
       },
       type: "array",
@@ -122,7 +121,6 @@ export const observationRequestSchema = {
     attributes: {
       description: "Attributes to further characterize the observation.",
       items: {
-        enum: ["ice", "snow"],
         type: "string",
       },
       type: "array",
@@ -158,7 +156,6 @@ export const observationBaseSchema = {
     attributes: {
       description: "Attributes to further characterize the observation.",
       items: {
-        enum: ["ice", "snow"],
         type: "string",
       },
       type: "array",
@@ -194,11 +191,6 @@ export const observationAssetBaseSchema = {
   },
   required: ["contentType"],
   type: "object",
-};
-
-export const observationAttributesSchema = {
-  enum: ["ice", "snow"],
-  type: "string",
 };
 
 export const observationStatusSchema = {
