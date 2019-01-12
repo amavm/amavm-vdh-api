@@ -1,3 +1,4 @@
+import { CondensedBicyclePaths } from "@entities/bicycle-paths";
 import { ObservationRequestAsset, ReportedObservationAsset } from "@entities/observations";
 import { S3 } from "aws-sdk";
 import { extension } from "mime-types";
@@ -8,6 +9,7 @@ import { v4 as uuid } from "uuid";
 export interface AssetsService {
   delete(url: string): Promise<void>;
   upload(asset: ObservationRequestAsset): Promise<ReportedObservationAsset>;
+  uploadBicyclePaths(data: CondensedBicyclePaths): Promise<void>;
 }
 
 export interface S3AssetsServiceOptions {
@@ -77,6 +79,16 @@ export class S3AssetsService implements AssetsService, CheckHealth {
       url: new URL(response.Key, await this.options.websiteRoot).toString(),
     };
   }
+
+  public async uploadBicyclePaths(data: CondensedBicyclePaths): Promise<void> {
+    await this.s3.upload({
+      Body: JSON.stringify(data),
+      Bucket: await this.options.bucket,
+      ContentType: "application/json",
+      Key: "bicycle-paths.json",
+      ServerSideEncryption: SERVER_SIDE_ENCRYPTION,
+    }).promise();
+  }
 }
 
 export class DummyLocalAssetsService implements AssetsService, CheckHealth {
@@ -98,6 +110,10 @@ export class DummyLocalAssetsService implements AssetsService, CheckHealth {
       contentType: asset.contentType,
       url: new URL(key, "https://example.org").toString(),
     };
+  }
+
+  public async uploadBicyclePaths(data: CondensedBicyclePaths): Promise<void> {
+    console.log(data);
   }
 
 }

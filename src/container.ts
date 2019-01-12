@@ -67,6 +67,7 @@ export const createContainer = uno.createContainerFactory<Container, ContainerOp
     container.assetsService()),
 
   syncService: ({ container }) => new DefaultSyncService(
+    container.assetsService(),
     container.geoSourceService(),
     container.bicyclePathsService()),
 });

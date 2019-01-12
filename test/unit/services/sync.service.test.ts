@@ -1,4 +1,5 @@
 import { BicyclePath } from "@entities/bicycle-paths";
+import { AssetsService, S3AssetsService } from "@services/assets.service";
 import { BicyclePathsService, MongoDbBicyclePathsService } from "@services/bicycle-paths.service";
 import { GeoSourceService, MTLOpenDataGeoSourceService } from "@services/geo-source.service";
 import { DefaultSyncService, SyncService } from "@services/sync.service";
@@ -9,13 +10,18 @@ import sinon = require("sinon");
 describe("DefaultSyncService", () => {
 
   let service: SyncService;
+  let assetsServiceStub: sinon.SinonStubbedInstance<AssetsService>;
   let geoSourceServiceStub: sinon.SinonStubbedInstance<GeoSourceService>;
   let bicyclePathsServiceStub: sinon.SinonStubbedInstance<BicyclePathsService>;
 
   beforeEach(() => {
+    assetsServiceStub = sinon.createStubInstance(S3AssetsService);
     geoSourceServiceStub = sinon.createStubInstance(MTLOpenDataGeoSourceService);
     bicyclePathsServiceStub = sinon.createStubInstance(MongoDbBicyclePathsService);
-    service = new DefaultSyncService(geoSourceServiceStub, bicyclePathsServiceStub);
+    service = new DefaultSyncService(
+      assetsServiceStub,
+      geoSourceServiceStub,
+      bicyclePathsServiceStub);
   });
 
   it("should sync bicycle paths", async () => {

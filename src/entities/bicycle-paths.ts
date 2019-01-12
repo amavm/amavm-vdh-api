@@ -1,4 +1,4 @@
-import { Position } from "geojson";
+import { FeatureCollection, MultiLineString, Position } from "geojson";
 import { WithContinuation } from "uno-serverless";
 
 export enum BicyclePathType {
@@ -89,3 +89,21 @@ export interface BicyclePathsRequest extends WithContinuation {
   /** The type of bicycle path */
   type?: BicyclePathType;
 }
+
+export interface BicyclePathFeature {
+  properties: {};
+  type: "Feature";
+}
+
+export interface CondensedBicyclePathProperty {
+  /** The number of lanes */
+  numberOfLanes?: number;
+
+  /** Which network does this bicycle path belong to. */
+  network?: BicyclePathNetwork;
+
+  /** The type of bicycle path */
+  type?: BicyclePathType;
+}
+
+export type CondensedBicyclePaths = FeatureCollection<MultiLineString, CondensedBicyclePathProperty>;

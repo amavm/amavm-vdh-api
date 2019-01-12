@@ -6,6 +6,90 @@
  */
 // tslint:disable
 
+export const geoJsonMultiLineStringSchema = {
+  additionalProperties: false,
+  description: "MultiLineString geometry object. https://tools.ietf.org/html/rfc7946#section-3.1.5",
+  properties: {
+    bbox: {
+      anyOf: [{
+          additionalItems: {
+            anyOf: [{
+                type: "number",
+              }, {
+                type: "number",
+              }, {
+                type: "number",
+              }, {
+                type: "number",
+              }],
+          },
+          items: [{
+              type: "number",
+            }, {
+              type: "number",
+            }, {
+              type: "number",
+            }, {
+              type: "number",
+            }],
+          minItems: 4,
+          type: "array",
+        }, {
+          additionalItems: {
+            anyOf: [{
+                type: "number",
+              }, {
+                type: "number",
+              }, {
+                type: "number",
+              }, {
+                type: "number",
+              }, {
+                type: "number",
+              }, {
+                type: "number",
+              }],
+          },
+          items: [{
+              type: "number",
+            }, {
+              type: "number",
+            }, {
+              type: "number",
+            }, {
+              type: "number",
+            }, {
+              type: "number",
+            }, {
+              type: "number",
+            }],
+          minItems: 6,
+          type: "array",
+        }],
+      description: "Bounding box of the coordinate range of the object's Geometries, Features, or Feature Collections. https://tools.ietf.org/html/rfc7946#section-5",
+    },
+    coordinates: {
+      items: {
+        items: {
+          items: {
+            type: "number",
+          },
+          type: "array",
+        },
+        type: "array",
+      },
+      type: "array",
+    },
+    type: {
+      description: "Specifies the type of GeoJSON object.",
+      enum: ["MultiLineString"],
+      type: "string",
+    },
+  },
+  required: ["coordinates", "type"],
+  type: "object",
+};
+
 export const getObservationsRequestSortSchema = {
   enum: ["timestamp-asc", "timestamp-desc"],
   type: "string",
@@ -197,6 +281,198 @@ export const observationStatusSchema = {
   description: "Status for an observation.",
   enum: ["ko", "ok"],
   type: "string",
+};
+
+export const condensedBicyclePathPropertySchema = {
+  additionalProperties: false,
+  properties: {
+    network: {
+      description: "Which network does this bicycle path belong to.",
+      enum: ["3-seasons", "4-seasons", "unknown"],
+      type: "string",
+    },
+    numberOfLanes: {
+      description: "The number of lanes",
+      type: "number",
+    },
+    type: {
+      description: "The type of bicycle path",
+      enum: ["accotement-asphalte", "bande-cycleable", "chaussee-designee", "piste-cyclable-rue", "piste-cyclable-site-propre", "piste-cyclable-trottoir", "sentier-polyvalent", "unknown", "velorue"],
+      type: "string",
+    },
+  },
+  type: "object",
+};
+
+export const geoJsonFeatureGeoJsonMultiLineStringCondensedBicyclePathPropertySchema = {
+  additionalProperties: false,
+  description: "A feature object which contains a geometry and associated properties. https://tools.ietf.org/html/rfc7946#section-3.2",
+  properties: {
+    bbox: {
+      anyOf: [{
+          additionalItems: {
+            anyOf: [{
+                type: "number",
+              }, {
+                type: "number",
+              }, {
+                type: "number",
+              }, {
+                type: "number",
+              }],
+          },
+          items: [{
+              type: "number",
+            }, {
+              type: "number",
+            }, {
+              type: "number",
+            }, {
+              type: "number",
+            }],
+          minItems: 4,
+          type: "array",
+        }, {
+          additionalItems: {
+            anyOf: [{
+                type: "number",
+              }, {
+                type: "number",
+              }, {
+                type: "number",
+              }, {
+                type: "number",
+              }, {
+                type: "number",
+              }, {
+                type: "number",
+              }],
+          },
+          items: [{
+              type: "number",
+            }, {
+              type: "number",
+            }, {
+              type: "number",
+            }, {
+              type: "number",
+            }, {
+              type: "number",
+            }, {
+              type: "number",
+            }],
+          minItems: 6,
+          type: "array",
+        }],
+      description: "Bounding box of the coordinate range of the object's Geometries, Features, or Feature Collections. https://tools.ietf.org/html/rfc7946#section-5",
+    },
+    geometry: geoJsonMultiLineStringSchema,
+    id: {
+      description: "A value that uniquely identifies this feature in a https://tools.ietf.org/html/rfc7946#section-3.2.",
+      type: ["string", "number"],
+    },
+    properties: condensedBicyclePathPropertySchema,
+    type: {
+      description: "Specifies the type of GeoJSON object.",
+      enum: ["Feature"],
+      type: "string",
+    },
+  },
+  required: ["geometry", "properties", "type"],
+  type: "object",
+};
+
+export const condensedBicyclePathsSchema = {
+  additionalProperties: false,
+  description: "A collection of feature objects.   https://tools.ietf.org/html/rfc7946#section-3.3",
+  properties: {
+    bbox: {
+      anyOf: [{
+          additionalItems: {
+            anyOf: [{
+                type: "number",
+              }, {
+                type: "number",
+              }, {
+                type: "number",
+              }, {
+                type: "number",
+              }],
+          },
+          items: [{
+              type: "number",
+            }, {
+              type: "number",
+            }, {
+              type: "number",
+            }, {
+              type: "number",
+            }],
+          minItems: 4,
+          type: "array",
+        }, {
+          additionalItems: {
+            anyOf: [{
+                type: "number",
+              }, {
+                type: "number",
+              }, {
+                type: "number",
+              }, {
+                type: "number",
+              }, {
+                type: "number",
+              }, {
+                type: "number",
+              }],
+          },
+          items: [{
+              type: "number",
+            }, {
+              type: "number",
+            }, {
+              type: "number",
+            }, {
+              type: "number",
+            }, {
+              type: "number",
+            }, {
+              type: "number",
+            }],
+          minItems: 6,
+          type: "array",
+        }],
+      description: "Bounding box of the coordinate range of the object's Geometries, Features, or Feature Collections. https://tools.ietf.org/html/rfc7946#section-5",
+    },
+    features: {
+      items: geoJsonFeatureGeoJsonMultiLineStringCondensedBicyclePathPropertySchema,
+      type: "array",
+    },
+    type: {
+      description: "Specifies the type of GeoJSON object.",
+      enum: ["FeatureCollection"],
+      type: "string",
+    },
+  },
+  required: ["features", "type"],
+  type: "object",
+};
+
+export const bicyclePathFeatureSchema = {
+  additionalProperties: false,
+  properties: {
+    properties: {
+      properties: {
+      },
+      type: "object",
+    },
+    type: {
+      enum: ["Feature"],
+      type: "string",
+    },
+  },
+  required: ["properties", "type"],
+  type: "object",
 };
 
 export const bicyclePathsRequestSchema = {
