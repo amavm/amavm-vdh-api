@@ -96,14 +96,20 @@ paths:
         - Bicycle Paths
       parameters:
         - name: bbox
-          description: The bounding box to restrict for position
+          description: >
+            The bounding box to restrict for position.
+            Submit 4 numbers:
+              - South West latitude,
+              - South West longitude,
+              - North East latitude,
+              - North East longitude
           in: query
           schema:
             type: array
             items:
               type: number
-            minimum: 8
-            maximum: 8
+            minimum: 4
+            maximum: 4
           style: form
           explode: false
         - name: borough

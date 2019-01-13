@@ -63,8 +63,10 @@ export interface BicyclePath {
 
 export interface BicyclePathsRequest extends WithContinuation {
   /**
-   * @maximum 8
-   * @minimum 8
+   * The bounding box to restrict bicycle path locations.
+   * Parameters are: South West latitude, South West longitude, North East latitude, North East longitude
+   * @maximum 4
+   * @minimum 4
    */
   bbox?: number[];
 

@@ -86,10 +86,11 @@ export class MongoDbBicyclePathsService implements BicyclePathsService, CheckHea
 
     let query: any = {};
     if (request.bbox) {
-      if (request.bbox.length !== 8) {
+      if (request.bbox.length !== 4) {
         throw validationError([{
           code: "invalid",
-          message: "Bounding box must have 8 numbers to specify the 4 corners",
+          message:
+            "Bounding box must have 4 numbers to specify the 4 corners. Order is SW lat, SW long, NE lat, NE long",
           target: "bbox",
         }]);
       }
@@ -99,10 +100,11 @@ export class MongoDbBicyclePathsService implements BicyclePathsService, CheckHea
             $geometry: {
               coordinates: [
                 [
-                  [ request.bbox[0], request.bbox[1] ],
-                  [ request.bbox[2], request.bbox[3] ],
-                  [ request.bbox[4], request.bbox[5] ],
-                  [ request.bbox[6], request.bbox[7] ],
+                  [ request.bbox[1], request.bbox[0] ], // SW
+                  [ request.bbox[1], request.bbox[2] ], // NW
+                  [ request.bbox[3], request.bbox[2] ], // NE
+                  [ request.bbox[3], request.bbox[0] ], // SE
+                  [ request.bbox[1], request.bbox[0] ], // SW
                 ],
               ],
               type : "Polygon",

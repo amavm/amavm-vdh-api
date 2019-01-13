@@ -486,11 +486,12 @@ export const bicyclePathsRequestSchema = {
   additionalProperties: false,
   properties: {
     bbox: {
+      description: "The bounding box to restrict bicycle path locations. Parameters are: South West latitude, South West longitude, North East latitude, North East longitude",
       items: {
         type: "number",
       },
-      maximum: 8,
-      minimum: 8,
+      maximum: 4,
+      minimum: 4,
       type: "array",
     },
     borough: {
