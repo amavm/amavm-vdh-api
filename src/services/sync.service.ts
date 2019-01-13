@@ -1,7 +1,7 @@
-import { BicyclePath, CondensedBicyclePathProperty, CondensedBicyclePaths } from "@entities/bicycle-paths";
+import { BicyclePath, GeoJSONBicyclePathProperties } from "@entities/bicycle-paths";
 import { BicyclePathsService } from "@services/bicycle-paths.service";
 import { GeoSourceService } from "@services/geo-source.service";
-import { Feature, MultiLineString } from "geojson";
+import { Feature, FeatureCollection, MultiLineString } from "geojson";
 import { toRecord } from "uno-serverless";
 import { AssetsService } from "./assets.service";
 
@@ -34,7 +34,8 @@ export class DefaultSyncService implements SyncService {
     await this.assetsService.uploadBicyclePaths(condensedBicyclePaths);
   }
 
-  public async condenseBp(indexedPaths: Record<string, BicyclePath>): Promise<CondensedBicyclePaths> {
+  public async condenseBp(indexedPaths: Record<string, BicyclePath>)
+    : Promise<FeatureCollection<MultiLineString, GeoJSONBicyclePathProperties>> {
       const ids = Object.keys(indexedPaths);
       // tslint:disable-next-line:prefer-for-of
       for (let index = 0; index < ids.length; index++) {
@@ -73,7 +74,7 @@ export class DefaultSyncService implements SyncService {
           type: x.type,
         },
         type: "Feature",
-      })) as Array<Feature<MultiLineString, CondensedBicyclePathProperty>>;
+      })) as Array<Feature<MultiLineString, GeoJSONBicyclePathProperties>>;
 
       return {
         features,

@@ -1,6 +1,7 @@
-import { CondensedBicyclePaths } from "@entities/bicycle-paths";
+import { GeoJSONBicyclePathProperties } from "@entities/bicycle-paths";
 import { ObservationRequestAsset, ReportedObservationAsset } from "@entities/observations";
 import { S3 } from "aws-sdk";
+import { FeatureCollection, MultiLineString } from "geojson";
 import { extension } from "mime-types";
 import { CheckHealth, checkHealth, HttpStatusCodes } from "uno-serverless";
 import { URL } from "url";
@@ -9,7 +10,7 @@ import { v4 as uuid } from "uuid";
 export interface AssetsService {
   delete(url: string): Promise<void>;
   upload(asset: ObservationRequestAsset): Promise<ReportedObservationAsset>;
-  uploadBicyclePaths(data: CondensedBicyclePaths): Promise<void>;
+  uploadBicyclePaths(data: FeatureCollection<MultiLineString, GeoJSONBicyclePathProperties>): Promise<void>;
 }
 
 export interface S3AssetsServiceOptions {
@@ -80,7 +81,8 @@ export class S3AssetsService implements AssetsService, CheckHealth {
     };
   }
 
-  public async uploadBicyclePaths(data: CondensedBicyclePaths): Promise<void> {
+  public async uploadBicyclePaths(
+    data: FeatureCollection<MultiLineString, GeoJSONBicyclePathProperties>): Promise<void> {
     await this.s3.upload({
       Body: JSON.stringify(data),
       Bucket: await this.options.bucket,
@@ -112,7 +114,8 @@ export class DummyLocalAssetsService implements AssetsService, CheckHealth {
     };
   }
 
-  public async uploadBicyclePaths(data: CondensedBicyclePaths): Promise<void> {
+  public async uploadBicyclePaths(
+    data: FeatureCollection<MultiLineString, GeoJSONBicyclePathProperties>): Promise<void> {
     console.log(data);
   }
 

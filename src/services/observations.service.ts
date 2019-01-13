@@ -1,5 +1,6 @@
 import {
-  GetObservationsRequest, GetObservationsRequestSort, ObservationRequest, ReportedObservation, ReportedObservationAsset,
+  GetObservationsRequest, GetObservationsRequestSort, ObservationRequest,
+  ObservationStatus, ReportedObservation, UpdateObservationStatusRequest,
 } from "@entities/observations";
 import { MongoClient, MongoClientOptions, ObjectID } from "mongodb";
 import {
@@ -14,6 +15,7 @@ export interface ObservationsService {
   get(observationId: string): Promise<ReportedObservation | undefined>;
   /** Reports an observation. */
   report(request: ObservationRequest): Promise<ReportedObservation>;
+  updateStatus(observationId: string, request: UpdateObservationStatusRequest): Promise<ReportedObservation>;
 }
 
 export interface MongoDbBicyclePathsServiceOptions {
@@ -49,17 +51,9 @@ export class MongoDbObservationsService implements ObservationsService, CheckHea
       undefined,
       async () => {
         const db = await this.lazyDb();
-        return new Promise((resolve, reject) => {
-          db.collection(OBSERVATIONS_COLLECTION).createIndex(
-            { timestamp: 1 },
-            (err, _) => {
-              if (err) {
-                reject(err);
-              } else {
-                resolve();
-              }
-            });
-        });
+        await db.collection(OBSERVATIONS_COLLECTION).createIndex({ timestamp: 1 });
+        await db.collection(OBSERVATIONS_COLLECTION).createIndex({ attributes: 1 });
+        await db.collection(OBSERVATIONS_COLLECTION).createIndex({ status: 1 });
       });
   }
 
@@ -94,6 +88,13 @@ export class MongoDbObservationsService implements ObservationsService, CheckHea
       query = {
         ...query,
         attributes: { $in: request.attributes },
+      };
+    }
+
+    if (request.status && request.status.length > 0) {
+      query = {
+        ...query,
+        status: { $in: request.status },
       };
     }
 
@@ -190,6 +191,7 @@ export class MongoDbObservationsService implements ObservationsService, CheckHea
       deviceId: request.deviceId,
       id: new ObjectID().toHexString(),
       position: request.position,
+      status: ObservationStatus.pending,
       timestamp: request.timestamp,
     };
 
@@ -202,6 +204,17 @@ export class MongoDbObservationsService implements ObservationsService, CheckHea
 
     await db.collection(OBSERVATIONS_COLLECTION).insertOne(reportedObs);
     return this.mapObservation(reportedObs);
+  }
+
+  public async updateStatus(observationId: string, request: UpdateObservationStatusRequest)
+    : Promise<ReportedObservation> {
+    const db = await this.lazyDb();
+    await db.collection(OBSERVATIONS_COLLECTION).updateOne(
+      { id: observationId },
+      { $set: { status: request.status } },
+    );
+
+    return (await this.get(observationId))!;
   }
 
   private mapObservation(from: any): ReportedObservation {

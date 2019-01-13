@@ -6,87 +6,18 @@
  */
 // tslint:disable
 
-export const geoJsonMultiLineStringSchema = {
+export const observationStatusSchema = {
+  description: "Status for observations",
+  enum: ["pending", "rejected", "valid"],
+  type: "string",
+};
+
+export const updateObservationStatusRequestSchema = {
   additionalProperties: false,
-  description: "MultiLineString geometry object. https://tools.ietf.org/html/rfc7946#section-3.1.5",
   properties: {
-    bbox: {
-      anyOf: [{
-          additionalItems: {
-            anyOf: [{
-                type: "number",
-              }, {
-                type: "number",
-              }, {
-                type: "number",
-              }, {
-                type: "number",
-              }],
-          },
-          items: [{
-              type: "number",
-            }, {
-              type: "number",
-            }, {
-              type: "number",
-            }, {
-              type: "number",
-            }],
-          minItems: 4,
-          type: "array",
-        }, {
-          additionalItems: {
-            anyOf: [{
-                type: "number",
-              }, {
-                type: "number",
-              }, {
-                type: "number",
-              }, {
-                type: "number",
-              }, {
-                type: "number",
-              }, {
-                type: "number",
-              }],
-          },
-          items: [{
-              type: "number",
-            }, {
-              type: "number",
-            }, {
-              type: "number",
-            }, {
-              type: "number",
-            }, {
-              type: "number",
-            }, {
-              type: "number",
-            }],
-          minItems: 6,
-          type: "array",
-        }],
-      description: "Bounding box of the coordinate range of the object's Geometries, Features, or Feature Collections. https://tools.ietf.org/html/rfc7946#section-5",
-    },
-    coordinates: {
-      items: {
-        items: {
-          items: {
-            type: "number",
-          },
-          type: "array",
-        },
-        type: "array",
-      },
-      type: "array",
-    },
-    type: {
-      description: "Specifies the type of GeoJSON object.",
-      enum: ["MultiLineString"],
-      type: "string",
-    },
+    status: observationStatusSchema,
   },
-  required: ["coordinates", "type"],
+  required: ["status"],
   type: "object",
 };
 
@@ -117,6 +48,15 @@ export const getObservationsRequestSchema = {
     startTs: {
       description: "The start timestamp. Unix Epoch in seconds.",
       type: "number",
+    },
+    status: {
+      description: "The status to filter by",
+      items: {
+        description: "Status for observations",
+        enum: ["pending", "rejected", "valid"],
+        type: "string",
+      },
+      type: "array",
     },
   },
   required: ["sort"],
@@ -177,12 +117,13 @@ export const reportedObservationSchema = {
       },
       type: "array",
     },
+    status: observationStatusSchema,
     timestamp: {
       description: "A timestamp of when the observation was done. Unix Epoch in seconds.",
       type: "number",
     },
   },
-  required: ["deviceId", "id", "position", "timestamp"],
+  required: ["deviceId", "id", "position", "status", "timestamp"],
   type: "object",
 };
 
@@ -284,13 +225,7 @@ export const observationAssetBaseSchema = {
   type: "object",
 };
 
-export const observationStatusSchema = {
-  description: "Status for an observation.",
-  enum: ["ko", "ok"],
-  type: "string",
-};
-
-export const condensedBicyclePathPropertySchema = {
+export const geoJsonBicyclePathPropertiesSchema = {
   additionalProperties: false,
   properties: {
     network: {
@@ -308,160 +243,6 @@ export const condensedBicyclePathPropertySchema = {
       type: "string",
     },
   },
-  type: "object",
-};
-
-export const geoJsonFeatureGeoJsonMultiLineStringCondensedBicyclePathPropertySchema = {
-  additionalProperties: false,
-  description: "A feature object which contains a geometry and associated properties. https://tools.ietf.org/html/rfc7946#section-3.2",
-  properties: {
-    bbox: {
-      anyOf: [{
-          additionalItems: {
-            anyOf: [{
-                type: "number",
-              }, {
-                type: "number",
-              }, {
-                type: "number",
-              }, {
-                type: "number",
-              }],
-          },
-          items: [{
-              type: "number",
-            }, {
-              type: "number",
-            }, {
-              type: "number",
-            }, {
-              type: "number",
-            }],
-          minItems: 4,
-          type: "array",
-        }, {
-          additionalItems: {
-            anyOf: [{
-                type: "number",
-              }, {
-                type: "number",
-              }, {
-                type: "number",
-              }, {
-                type: "number",
-              }, {
-                type: "number",
-              }, {
-                type: "number",
-              }],
-          },
-          items: [{
-              type: "number",
-            }, {
-              type: "number",
-            }, {
-              type: "number",
-            }, {
-              type: "number",
-            }, {
-              type: "number",
-            }, {
-              type: "number",
-            }],
-          minItems: 6,
-          type: "array",
-        }],
-      description: "Bounding box of the coordinate range of the object's Geometries, Features, or Feature Collections. https://tools.ietf.org/html/rfc7946#section-5",
-    },
-    geometry: geoJsonMultiLineStringSchema,
-    id: {
-      description: "A value that uniquely identifies this feature in a https://tools.ietf.org/html/rfc7946#section-3.2.",
-      type: ["string", "number"],
-    },
-    properties: condensedBicyclePathPropertySchema,
-    type: {
-      description: "Specifies the type of GeoJSON object.",
-      enum: ["Feature"],
-      type: "string",
-    },
-  },
-  required: ["geometry", "properties", "type"],
-  type: "object",
-};
-
-export const condensedBicyclePathsSchema = {
-  additionalProperties: false,
-  description: "A collection of feature objects.   https://tools.ietf.org/html/rfc7946#section-3.3",
-  properties: {
-    bbox: {
-      anyOf: [{
-          additionalItems: {
-            anyOf: [{
-                type: "number",
-              }, {
-                type: "number",
-              }, {
-                type: "number",
-              }, {
-                type: "number",
-              }],
-          },
-          items: [{
-              type: "number",
-            }, {
-              type: "number",
-            }, {
-              type: "number",
-            }, {
-              type: "number",
-            }],
-          minItems: 4,
-          type: "array",
-        }, {
-          additionalItems: {
-            anyOf: [{
-                type: "number",
-              }, {
-                type: "number",
-              }, {
-                type: "number",
-              }, {
-                type: "number",
-              }, {
-                type: "number",
-              }, {
-                type: "number",
-              }],
-          },
-          items: [{
-              type: "number",
-            }, {
-              type: "number",
-            }, {
-              type: "number",
-            }, {
-              type: "number",
-            }, {
-              type: "number",
-            }, {
-              type: "number",
-            }],
-          minItems: 6,
-          type: "array",
-        }],
-      description: "Bounding box of the coordinate range of the object's Geometries, Features, or Feature Collections. https://tools.ietf.org/html/rfc7946#section-5",
-    },
-    features: {
-      items: geoJsonFeatureGeoJsonMultiLineStringCondensedBicyclePathPropertySchema,
-      type: "array",
-    },
-    type: {
-      description: "Specifies the type of GeoJSON object.",
-      enum: ["FeatureCollection"],
-      type: "string",
-    },
-  },
-  required: ["features", "type"],
   type: "object",
 };
 

@@ -1,7 +1,10 @@
 import { httpFunc } from "@common";
 import { Container } from "@container";
-import { GetObservationsRequest, GetObservationsRequestSort, ObservationRequest } from "@entities/observations";
-import { observationRequestSchema } from "@entities/schemas";
+import {
+  GetObservationsRequest, GetObservationsRequestSort, ObservationRequest,
+  ObservationStatus, UpdateObservationStatusRequest,
+} from "@entities/observations";
+import { observationRequestSchema, updateObservationStatusRequestSchema } from "@entities/schemas";
 import { created, httpRouter, noContent } from "uno-serverless";
 
 export const handler = httpFunc()
@@ -16,6 +19,7 @@ export const handler = httpFunc()
             ? event.parameters.sort as GetObservationsRequestSort
             : GetObservationsRequestSort.TimestampDesc,
           startTs: event.parameters.startTs ? parseInt(event.parameters.startTs, 10) : undefined,
+          status: event.parameters.status ? event.parameters.status.split(",") as ObservationStatus[] : undefined,
         };
 
         return observationsService().find(request);
@@ -35,6 +39,12 @@ export const handler = httpFunc()
       },
       get: async ({ event, services: { observationsService } }) => {
         return observationsService().get(event.parameters.observationId);
+      },
+    },
+    ":observationId/status": {
+      put: async ({ event, services: { observationsService } }) => {
+        const request = event.body<UpdateObservationStatusRequest>({ validate: updateObservationStatusRequestSchema });
+        return observationsService().updateStatus(event.parameters.observationId, request);
       },
     },
   }));

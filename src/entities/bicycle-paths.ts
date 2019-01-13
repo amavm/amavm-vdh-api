@@ -97,7 +97,7 @@ export interface BicyclePathFeature {
   type: "Feature";
 }
 
-export interface CondensedBicyclePathProperty {
+export interface GeoJSONBicyclePathProperties {
   /** The number of lanes */
   numberOfLanes?: number;
 
@@ -107,5 +107,3 @@ export interface CondensedBicyclePathProperty {
   /** The type of bicycle path */
   type?: BicyclePathType;
 }
-
-export type CondensedBicyclePaths = FeatureCollection<MultiLineString, CondensedBicyclePathProperty>;

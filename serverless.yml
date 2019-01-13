@@ -103,6 +103,11 @@ functions:
           cors: true
       - http:
           path: api/v1/observations/{proxy+}
+          method: PUT
+          cors: true
+          private: true
+      - http:
+          path: api/v1/observations/{proxy+}
           method: DELETE
           cors: true
           private: true

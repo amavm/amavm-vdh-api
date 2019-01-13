@@ -96,9 +96,8 @@ paths:
         - Bicycle Paths
       parameters:
         - name: bbox
-          description: >
-            The bounding box to restrict for position.
-            Submit 4 numbers:
+          description: |
+            The bounding box to restrict for position. Submit 4 numbers:
               - South West latitude,
               - South West longitude,
               - North East latitude,
@@ -205,6 +204,15 @@ paths:
               type: string
           style: form
           explode: false
+        - name: status
+          description: The list of observation statuses to filter the list
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: false
         - name: nextToken
           description: The continuation token for next results
           in: query
@@ -304,6 +312,42 @@ paths:
           headers:
             x-amzn-RequestId:
               $ref: '#/components/headers/x-amzn-RequestId'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notfound'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  '/api/v1/observations/{observationId}/status':
+    put:
+      summary: Update the status of an observation
+      tags:
+        - Observations
+      security:
+        - ApiKey: []
+      parameters:
+        - name: observationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateObservationStatusRequest'
+      responses:
+        '200':
+          description: The updated observation
+          headers:
+            x-amzn-RequestId:
+              $ref: '#/components/headers/x-amzn-RequestId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportedObservation'
+        '403':
+          $ref: '#/components/responses/forbidden'
         '404':
           $ref: '#/components/responses/notfound'
         5XX:
@@ -514,6 +558,20 @@ components:
         - marquage-sol
         - unknown
       type: string
+    BicyclePathFeature:
+      type: object
+      properties:
+        properties:
+          type: object
+          properties: {}
+        type:
+          type: string
+          enum:
+            - Feature
+      additionalProperties: false
+      required:
+        - properties
+        - type
     BicyclePathNetwork:
       enum:
         - 3-seasons
@@ -536,8 +594,13 @@ components:
       type: object
       properties:
         bbox:
-          maximum: 8
-          minimum: 8
+          description: >-
+            The bounding box to restrict bicycle path locations.
+
+            Parameters are: South West latitude, South West longitude, North
+            East latitude, North East longitude
+          maximum: 4
+          minimum: 4
           type: array
           items:
             type: number
@@ -580,12 +643,54 @@ components:
           description: The next continuation token.
           type: string
       additionalProperties: false
+    GeoJSONBicyclePathProperties:
+      type: object
+      properties:
+        numberOfLanes:
+          description: The number of lanes
+          type: number
+        network:
+          description: Which network does this bicycle path belong to.
+          enum:
+            - 3-seasons
+            - 4-seasons
+            - unknown
+          type: string
+        type:
+          description: The type of bicycle path
+          enum:
+            - accotement-asphalte
+            - bande-cycleable
+            - chaussee-designee
+            - piste-cyclable-rue
+            - piste-cyclable-site-propre
+            - piste-cyclable-trottoir
+            - sentier-polyvalent
+            - unknown
+            - velorue
+          type: string
+      additionalProperties: false
     GetObservationsRequest:
       type: object
       properties:
+        attributes:
+          description: The attributes to filter by
+          type: array
+          items:
+            type: string
         startTs:
           description: The start timestamp. Unix Epoch in seconds.
           type: number
+        status:
+          description: The status to filter by
+          type: array
+          items:
+            description: Status for observations
+            enum:
+              - pending
+              - rejected
+              - valid
+            type: string
         endTs:
           description: The end timestamp. Unix Epoch in seconds.
           type: number
@@ -692,23 +797,27 @@ components:
         - contentType
         - data
     ObservationStatus:
-      description: Status for an observation.
+      description: Status for observations
       enum:
-        - ko
-        - ok
+        - pending
+        - rejected
+        - valid
       type: string
     ReportedObservation:
       description: A reported observation
       type: object
       properties:
-        id:
-          description: Unique id
-          type: string
         assets:
           description: Associated assets.
           type: array
           items:
             $ref: '#/components/schemas/ReportedObservationAsset'
+        id:
+          description: Unique id
+          type: string
+        status:
+          $ref: '#/components/schemas/ObservationStatus'
+          description: The status of the observation.
         attributes:
           description: Attributes to further characterize the observation.
           type: array
@@ -735,6 +844,7 @@ components:
         - deviceId
         - id
         - position
+        - status
         - timestamp
     ReportedObservationAsset:
       description: An asset attached alongside a ReportedObservation.
@@ -750,3 +860,11 @@ components:
       required:
         - contentType
         - url
+    UpdateObservationStatusRequest:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ObservationStatus'
+      additionalProperties: false
+      required:
+        - status

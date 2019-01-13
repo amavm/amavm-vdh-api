@@ -1,12 +1,6 @@
 import { Position } from "geojson";
 import { WithContinuation } from "uno-serverless";
 
-/** Status for an observation. */
-export enum ObservationStatus {
-  Ok = "ok",
-  Ko = "ko",
-}
-
 export enum AssetContentType {
   Jpeg = "image/jpeg",
   Png = "image/png",
@@ -54,12 +48,27 @@ export interface ObservationRequest extends ObservationBase {
   assets?: ObservationRequestAsset[];
 }
 
+/** Status for observations */
+export enum ObservationStatus {
+  /**
+   * The observation has been submitted, but it is neither validated nor rejected.
+   * Default when submitting.
+   */
+  pending = "pending",
+  /** The observation has been validated */
+  valid = "valid",
+  /** The observation has been rejected */
+  rejected = "rejected",
+}
+
 /** A reported observation */
 export interface ReportedObservation extends ObservationBase {
-  /** Unique id */
-  id: string;
   /** Associated assets. */
   assets?: ReportedObservationAsset[];
+  /** Unique id */
+  id: string;
+  /** The status of the observation. */
+  status: ObservationStatus;
 }
 
 export enum GetObservationsRequestSort {
@@ -74,9 +83,16 @@ export interface GetObservationsRequest extends WithContinuation {
   /** The start timestamp. Unix Epoch in seconds. */
   startTs?: number;
 
+  /** The status to filter by */
+  status?: ObservationStatus[];
+
   /** The end timestamp. Unix Epoch in seconds. */
   endTs?: number;
 
   /** The sort order. */
   sort: GetObservationsRequestSort;
+}
+
+export interface UpdateObservationStatusRequest {
+  status: ObservationStatus;
 }
