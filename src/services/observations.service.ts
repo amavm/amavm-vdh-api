@@ -90,6 +90,13 @@ export class MongoDbObservationsService implements ObservationsService, CheckHea
 
     let query: any = {};
 
+    if (request.attributes && request.attributes.length > 0) {
+      query = {
+        ...query,
+        attributes: { $in: request.attributes },
+      };
+    }
+
     if (request.endTs) {
       query = {
         ...query,

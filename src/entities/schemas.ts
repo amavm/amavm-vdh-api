@@ -98,6 +98,13 @@ export const getObservationsRequestSortSchema = {
 export const getObservationsRequestSchema = {
   additionalProperties: false,
   properties: {
+    attributes: {
+      description: "The attributes to filter by",
+      items: {
+        type: "string",
+      },
+      type: "array",
+    },
     endTs: {
       description: "The end timestamp. Unix Epoch in seconds.",
       type: "number",

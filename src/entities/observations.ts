@@ -68,6 +68,9 @@ export enum GetObservationsRequestSort {
 }
 
 export interface GetObservationsRequest extends WithContinuation {
+  /** The attributes to filter by */
+  attributes?: string[];
+
   /** The start timestamp. Unix Epoch in seconds. */
   startTs?: number;
 

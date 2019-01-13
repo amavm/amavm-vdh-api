@@ -190,6 +190,15 @@ paths:
           in: query
           schema:
             type: number
+        - name: attributes
+          description: The list of observation attributes to filter the list
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: false
         - name: nextToken
           description: The continuation token for next results
           in: query
@@ -228,9 +237,12 @@ paths:
             schema:
               $ref: '#/components/schemas/ObservationRequest'
       responses:
-        '200':
+        '201':
           description: The reported observation
           headers:
+            Location:
+              schema:
+                type: string
             x-amzn-RequestId:
               $ref: '#/components/headers/x-amzn-RequestId'
           content:
