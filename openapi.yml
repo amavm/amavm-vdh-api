@@ -290,6 +290,8 @@ paths:
       summary: Delete an observation
       tags:
         - Observations
+      security:
+        - ApiKey: []
       parameters:
         - name: observationId
           in: path
@@ -307,6 +309,11 @@ paths:
         5XX:
           $ref: '#/components/responses/internalServerError'
 components:
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      in: header
+      name: x-api-key
   headers:
     x-amzn-RequestId:
       description: The request id that uniquely identifies this request.
