@@ -39,7 +39,7 @@ custom:
 provider:
   name: aws
   apiKeys:
-    - admin
+    - admin-${opt:stage}
   runtime: nodejs8.10
   region: ${self:custom.region}
   timeout: 30
