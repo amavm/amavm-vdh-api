@@ -9,9 +9,11 @@
     "build": "tsc"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "mongodb": "^3.3.3"
   },
   "devDependencies": {
+    "@types/mongodb": "^3.3.6",
     "@types/node": "^12.11.7",
     "eslint": "^6.6.0",
     "eslint-plugin-import": "^2.18.2",
