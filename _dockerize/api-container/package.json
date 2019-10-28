@@ -1,0 +1,26 @@
+{
+    "name": "server",
+    "version": "0.0.0",
+    "scripts": {
+      "postinstall": "tsc -p ./src",
+      "watch": "tsc -w -p ./src",
+      "debug": "nodemon --watch ./dist --inspect=0.0.0.0:9222 --nolazy ./dist/index.js",
+      "docker-debug": "docker-compose up",
+      "start": "node ./dist/index.js"
+    },
+    "dependencies": {
+      "express": "^4.17.1",
+      "mongodb": "^3.3.3"
+    },
+    "devDependencies": {
+      "@types/mongodb": "^3.3.6",
+      "@types/node": "^12.11.7",
+      "eslint": "^6.6.0",
+      "eslint-plugin-import": "^2.18.2",
+      "nodemon": "^1.19.4",
+      "ts-node": "^8.4.1",
+      "typescript": "^3.6.4"
+    },
+    "main": "./dist/index.js"
+  }
+  
