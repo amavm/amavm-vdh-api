@@ -4,7 +4,7 @@
   "description": "Node.js API for VDH apps",
   "author": "VDH Team",
   "scripts": {
-    "start": "node --inspect=5858 -r ts-node/register ./src/server.ts",
+    "start": "node --inspect=0.0.0.0 -r ts-node/register ./src/server.ts",
     "start:watch": "nodemon",
     "build": "tsc"
   },

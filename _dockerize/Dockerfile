@@ -22,4 +22,4 @@ CMD npm run start:watch
 
 # docker build -t amavm/node-vdh-api .
 # docker image rm amavm/node-vdh-api
-# docker run -p 1234:3000 --name node-vdh-api -v "$(pwd)/src":/usr/src/app/src -d amavm/node-vdh-api
+# docker run --rm -d -p 3000:3000 -p 9229:9229 --name node-vdh-api -v ${PWD}:/usr/src/app -v /usr/src/app/node_modules -d amavm/node-vdh-api
