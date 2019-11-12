@@ -1,0 +1,19 @@
+version: "2"
+
+services:
+  api:
+    container_name: vdh-api
+    build: .
+    command: npm run debug
+    volumes:
+      - ./dist:/server/dist
+    ports:
+      - "3000:3000"
+      - "9222:9222"
+  db:
+    container_name: vdh-db
+    image: mongo:bionic
+    volumes:
+      - mongo-data:/data/db
+volumes: 
+  mongo-data:
