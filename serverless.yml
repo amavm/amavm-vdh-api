@@ -39,7 +39,13 @@ custom:
 provider:
   name: aws
   apiKeys:
-    - admin-${opt:stage}
+    - all:
+      - admin-${opt:stage}
+  usagePlan:
+    - all:
+        throttle:
+          burstLimit: 200
+          rateLimit: 1000
   runtime: nodejs8.10
   region: ${self:custom.region}
   timeout: 30
