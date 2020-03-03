@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.339.0",
+    "firebase-admin": "^8.9.2",
     "mime-types": "^2.1.21",
     "mongodb": "^3.1.8",
     "proj4": "^2.5.0",
