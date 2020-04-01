@@ -18,11 +18,11 @@ import {
   ObservationsService
 } from "@services/observations.service";
 import { DefaultSyncService, SyncService } from "@services/sync.service";
+import * as firebaseAdmin from "firebase-admin";
 import * as uno from "uno-serverless";
 import { httpClientFactory, memoize } from "uno-serverless";
 import * as unoAws from "uno-serverless-aws";
-
-import * as firebaseAdmin from "firebase-admin";
+import { VError } from "verror";
 
 export enum ExecutionMode {
   LocalDev = "localdev",
@@ -39,7 +39,7 @@ export interface Container {
   geoSourceService(): GeoSourceService;
   observationsService(): ObservationsService;
   syncService(): SyncService;
-  firebaseApp(): firebaseAdmin.app.App;
+  firebaseApp(): Promise<firebaseAdmin.app.App>;
   authService(): AuthService;
 }
 
@@ -110,5 +110,16 @@ export const createContainer = uno.createContainerFactory<
       container.bicyclePathsService()
     ),
 
-  firebaseApp: () => firebaseAdmin.initializeApp(),
+  firebaseApp: async ({ container }) => {
+    let firebaseConfig: firebaseAdmin.AppOptions | undefined;
+    try {
+      firebaseConfig = JSON.parse(await container.configService().get(Config.FirebaseConfig));
+    } catch (err) {
+      throw new VError({ name: "InvalidFirebaseConfig", cause: err }, "Unable to parse Firebase config");
+    }
+    if (typeof firebaseConfig !== "object") {
+      throw new VError({ name: "InvalidFirebaseConfig", info: firebaseConfig }, "Invalid Firebase config");
+    }
+    return firebaseAdmin.initializeApp(firebaseConfig);
+  }
 });

@@ -2,6 +2,8 @@ import * as firebase from "firebase-admin";
 import * as uno from "uno-serverless";
 import { memoize } from "uno-serverless";
 
+const BEARER = "bearer";
+
 export type UserRecord = firebase.auth.UserRecord;
 
 export interface AuthService {
@@ -34,18 +36,18 @@ export class FirebaseAuthService implements AuthService {
 
   private idToken?: firebase.auth.DecodedIdToken;
 
-  constructor(public readonly app: firebase.app.App) {}
+  constructor(public readonly app: Promise<firebase.app.App>) {}
 
   public async init(authorizationHeader: string) {
     if (this.isAuthenticated()) {
       throw uno.internalServerError("FirebaseAuthService is already initialized");
     }
-    if (!authorizationHeader.startsWith("Bearer")) {
+    if (!authorizationHeader.toLowerCase().startsWith(BEARER)) {
       throw uno.unauthorizedError("Authorization header", "Not a bearer token");
     }
     try {
       // @ts-ignore
-      this.idToken =  await this.app.auth().verifyIdToken(authorizationHeader.substring(7));
+      this.idToken =  await this.app.auth().verifyIdToken(authorizationHeader.substring(BEARER.length  + 1));
     } catch (e) {
       throw uno.unauthorizedError("Authorization header", "Invalid token");
     }
@@ -59,7 +61,7 @@ export class FirebaseAuthService implements AuthService {
     if (!this.isAuthenticated() || this.idToken === undefined) {
       throw uno.internalServerError("User not authenticated.");
     }
-    return this.app.auth().getUser(this.idToken.uid);
+    return (await this.app).auth().getUser(this.idToken.uid);
   }
 
   public async authenticatedUserId() {

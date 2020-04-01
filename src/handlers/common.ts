@@ -48,7 +48,7 @@ const authMiddlware: uno.Middleware<uno.HttpUnoEvent, Container> = async functio
   const {event, context, services} = arg;
   if ("Authorization" in event.headers) {
     try {
-      await services.authService().init(event.headers.Authorizatio);
+      await services.authService().init(event.headers.Authorization);
     } catch (e) {
       const message = e.message || "Unknown";
       context.log.warn(`${message}\n${e.stackTrace}`);

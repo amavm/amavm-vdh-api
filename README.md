@@ -41,7 +41,8 @@ $ npm run test:watch
     - `/amavm/vdh-api/${environment}/assets/mongodb-url` - the URL of your MongoDB. I think this also needs to include credentials, so you should encrypt this. 
     - `/amavm/vdh-api/${environment}/assets/mongodb-db` - the default MongoDB database. **Default: `amavm-vdh`**
     - `/amavm/vdh-api/${environment}/assets/mtl-od-bp-url` - the URL of the city's bike path file **Default: `http://donnees.ville.montreal.qc.ca/dataset/5ea29f40-1b5b-4f34-85b3-7c67088ff536/resource/0dc6612a-be66-406b-b2d9-59c9e1c65ebf/download/reseau_cyclable_2018_c.geojson`**
-
+    - `/amavm/vdh-api/${environment}/firebase/config` - the Firebase config object as a JSON string
+    
 1. Run the deploy:
 
     ```bash

@@ -6,4 +6,5 @@ export enum Config {
   MTLOpenDataBicyclePathUrl = "mtl-od-bp-url",
   MongoDbUrl = "mongodb-url",
   MongoDbDb = "mongodb-db",
+  FirebaseConfig = "firebase/config"
 }
