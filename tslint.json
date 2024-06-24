@@ -8,6 +8,7 @@
     "no-console": false,
     "interface-name": false,
     "max-classes-per-file": false,
-    "no-hardcoded-credentials": false
+    "no-hardcoded-credentials": false,
+    "trailing-comma": false
   }
 }

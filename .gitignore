@@ -8,3 +8,4 @@ tmp/*
 coverage
 test-results.xml
 newman
+.idea
